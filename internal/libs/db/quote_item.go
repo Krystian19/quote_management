@@ -2,7 +2,6 @@ package db
 
 import (
 	"github.com/google/uuid"
-	"github.com/samber/lo"
 )
 
 type QuoteItem struct {
@@ -18,20 +17,18 @@ func (QuoteItem) TableName() string {
 }
 
 func (d *DB) CreateQuoteItems(
-	taintScanId uuid.UUID,
-	quoteItems []*QuoteItem,
+	items []*QuoteItem,
 	txn *Txn,
 ) error {
-	items :=
-		lo.Map(quoteItems, func(c *QuoteItem, idx int) *QuoteItem {
-			c.QuoteId = taintScanId
+	return d.getQuery(txn).Model(QuoteItem{}).Create(items).Error
+}
 
-			return c
-		})
+func (d *DB) GetQuoteItems(
+	quoteId uuid.UUID,
+	txn *Txn,
+) ([]*QuoteItem, error) {
+	var res []*QuoteItem
+	err := d.getQuery(txn).Where("quote_id = ?", quoteId).Find(&res).Error
 
-	if err := d.getQuery(txn).Model(QuoteItem{}).Create(items).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return res, err
 }
