@@ -18,6 +18,10 @@ type Quote struct {
 	UpdatedAt time.Time
 }
 
+func (Quote) TableName() string {
+	return "quote"
+}
+
 var QuoteFactory = factory.NewFactory(
 	Quote{},
 ).
