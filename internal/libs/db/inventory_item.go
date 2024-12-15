@@ -53,3 +53,10 @@ func (d *DB) GetInventoryItem(itemId uuid.UUID, txn *Txn) (*InventoryItem, error
 
 	return &res, nil
 }
+
+func (d *DB) GetAllInventoryItems(itemId uuid.UUID, txn *Txn) ([]*InventoryItem, error) {
+	var res []*InventoryItem
+	err := d.getQuery(txn).Find(&res).Error
+
+	return res, err
+}
