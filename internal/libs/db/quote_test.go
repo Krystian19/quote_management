@@ -15,16 +15,16 @@ func TestCreateQuote(t *testing.T) {
 	}
 
 	dummyQuote := db.QuoteFactory.MustCreate().(db.Quote)
-	created_quote, err := test_db.CreateQuote(dummyQuote, nil)
+	createdQuote, err := test_db.CreateQuote(dummyQuote, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dummyQuote.ID = created_quote.ID
-	dummyQuote.CreatedAt = created_quote.CreatedAt
-	dummyQuote.UpdatedAt = created_quote.UpdatedAt
+	dummyQuote.ID = createdQuote.ID
+	dummyQuote.CreatedAt = createdQuote.CreatedAt
+	dummyQuote.UpdatedAt = createdQuote.UpdatedAt
 
-	require.Equal(t, dummyQuote, *created_quote)
+	require.Equal(t, dummyQuote, *createdQuote)
 }
 
 func TestGetQuote(t *testing.T) {

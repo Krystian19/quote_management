@@ -11,11 +11,10 @@ import (
 )
 
 type InventoryItem struct {
-	ID          uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
-	Name        string
-	Description string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	Name      string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func (InventoryItem) TableName() string {
@@ -51,7 +50,7 @@ func (d *DB) GetInventoryItem(itemId uuid.UUID, txn *Txn) (*InventoryItem, error
 	return &res, nil
 }
 
-func (d *DB) GetAllInventoryItems(itemId uuid.UUID, txn *Txn) ([]*InventoryItem, error) {
+func (d *DB) GetAllInventoryItems(txn *Txn) ([]*InventoryItem, error) {
 	var res []*InventoryItem
 	err := d.getQuery(txn).Find(&res).Error
 
