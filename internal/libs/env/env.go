@@ -8,6 +8,8 @@ import (
 )
 
 type Env struct {
+	REDIS_TEST_URL string
+
 	DB_URL      string
 	DB_TEST_URL string
 }
@@ -46,6 +48,8 @@ func GetEnv() Env {
 	}
 
 	return Env{
+		REDIS_TEST_URL: getEnv("REDIS_TEST_URL", "quote.redis:6379"),
+
 		DB_URL:      getEnv("DB_URL", "host=aurora.postgres port=5432 user=postgres password=pass dbname=aurora sslmode=disable"),
 		DB_TEST_URL: getEnv("DB_TEST_URL", "host=aurora.postgres port=5432 user=postgres password=pass dbname=aurora_test sslmode=disable"),
 	}

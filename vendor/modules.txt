@@ -27,6 +27,9 @@ github.com/antlr4-go/antlr/v4
 # github.com/bluele/factory-go v0.0.1
 ## explicit; go 1.15
 github.com/bluele/factory-go/factory
+# github.com/cespare/xxhash/v2 v2.2.0
+## explicit; go 1.11
+github.com/cespare/xxhash/v2
 # github.com/coder/websocket v1.8.12
 ## explicit; go 1.19
 github.com/coder/websocket
@@ -39,6 +42,13 @@ github.com/coder/websocket/wsjson
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew
+# github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f
+## explicit
+github.com/dgryski/go-rendezvous
+# github.com/dinerio/aurora-btc v0.1.5
+## explicit; go 1.22.2
+github.com/dinerio/aurora-btc/internal/libs/env
+github.com/dinerio/aurora-btc/internal/libs/rds
 # github.com/dustin/go-humanize v1.0.1
 ## explicit; go 1.16
 github.com/dustin/go-humanize
@@ -61,6 +71,16 @@ github.com/go-faster/city
 # github.com/go-faster/errors v0.7.1
 ## explicit; go 1.20
 github.com/go-faster/errors
+# github.com/go-redis/redis/v8 v8.11.5
+## explicit; go 1.17
+github.com/go-redis/redis/v8
+github.com/go-redis/redis/v8/internal
+github.com/go-redis/redis/v8/internal/hashtag
+github.com/go-redis/redis/v8/internal/hscan
+github.com/go-redis/redis/v8/internal/pool
+github.com/go-redis/redis/v8/internal/proto
+github.com/go-redis/redis/v8/internal/rand
+github.com/go-redis/redis/v8/internal/util
 # github.com/go-sql-driver/mysql v1.8.1
 ## explicit; go 1.18
 github.com/go-sql-driver/mysql
@@ -73,9 +93,6 @@ github.com/golang-sql/civil
 # github.com/golang-sql/sqlexp v0.1.0
 ## explicit; go 1.16
 github.com/golang-sql/sqlexp
-# github.com/golang/protobuf v1.5.4
-## explicit; go 1.17
-github.com/golang/protobuf/proto
 # github.com/google/uuid v1.6.0
 ## explicit
 github.com/google/uuid
@@ -111,6 +128,9 @@ github.com/jackc/puddle/v2/internal/genstack
 # github.com/jaswdr/faker v1.19.1
 ## explicit; go 1.11
 github.com/jaswdr/faker
+# github.com/jaswdr/faker/v2 v2.3.3
+## explicit; go 1.20
+github.com/jaswdr/faker/v2
 # github.com/jinzhu/inflection v1.0.0
 ## explicit
 github.com/jinzhu/inflection
@@ -450,7 +470,7 @@ golang.org/x/text/width
 # google.golang.org/genproto/googleapis/rpc v0.0.0-20240318140521-94a12d6c2237
 ## explicit; go 1.19
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.62.1
+# google.golang.org/grpc v1.64.0
 ## explicit; go 1.19
 google.golang.org/grpc
 google.golang.org/grpc/attributes
@@ -530,13 +550,11 @@ google.golang.org/protobuf/internal/strs
 google.golang.org/protobuf/internal/version
 google.golang.org/protobuf/proto
 google.golang.org/protobuf/protoadapt
-google.golang.org/protobuf/reflect/protodesc
 google.golang.org/protobuf/reflect/protoreflect
 google.golang.org/protobuf/reflect/protoregistry
 google.golang.org/protobuf/runtime/protoiface
 google.golang.org/protobuf/runtime/protoimpl
 google.golang.org/protobuf/types/descriptorpb
-google.golang.org/protobuf/types/gofeaturespb
 google.golang.org/protobuf/types/known/anypb
 google.golang.org/protobuf/types/known/durationpb
 google.golang.org/protobuf/types/known/emptypb
