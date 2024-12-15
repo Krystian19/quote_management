@@ -4,17 +4,29 @@ import (
 	"errors"
 	"time"
 
+	"github.com/Krystian19/quote_management/internal/libs/utils"
+	"github.com/bluele/factory-go/factory"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Quote struct {
-	ID        uuid.UUID  `gorm:"type:uuid;default:uuid_generate_v4()"`
-	AccountId uuid.UUID  `gorm:"type:uuid;default:uuid_generate_v4()"`
-	PaymentId *uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	AccountId uuid.UUID
+	PaymentId *uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+var QuoteFactory = factory.NewFactory(
+	Quote{},
+).
+	Attr("AccountId", func(args factory.Args) (interface{}, error) {
+		return uuid.New(), nil
+	}).
+	Attr("PaymentId", func(args factory.Args) (interface{}, error) {
+		return utils.GetPtr(uuid.New()), nil
+	})
 
 func (d *DB) CreateQuote(newQuote Quote, txn *Txn) (*Quote, error) {
 	if err := d.getQuery(txn).Create(&newQuote).Error; err != nil {
