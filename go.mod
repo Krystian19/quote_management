@@ -4,6 +4,7 @@ require (
 	github.com/bluele/factory-go v0.0.1
 	github.com/google/uuid v1.6.0
 	github.com/jaswdr/faker v1.19.1
+	github.com/joho/godotenv v1.5.1
 	github.com/pressly/goose/v3 v3.22.1
 	github.com/samber/lo v1.47.0
 	gorm.io/driver/postgres v1.5.11
