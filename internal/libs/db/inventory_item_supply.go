@@ -19,7 +19,7 @@ func (InventoryItemSupply) TableName() string {
 }
 
 var InventoryItemSupplyFactory = factory.NewFactory(
-	Quote{},
+	InventoryItemSupply{},
 ).
 	Attr("InventoryItemId", func(args factory.Args) (interface{}, error) {
 		return uuid.New(), nil

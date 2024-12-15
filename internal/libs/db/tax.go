@@ -44,7 +44,7 @@ func (d *DB) CreateTax(newTax Tax, txn *Txn) (*Tax, error) {
 
 func (d *DB) GetAllTaxes(txn *Txn) ([]*Tax, error) {
 	var res []*Tax
-	err := d.getQuery(txn).Where("effective_at = ?", time.Now()).Find(&res).Error
+	err := d.getQuery(txn).Where("effective_at < ?", time.Now()).Find(&res).Error
 
 	return res, err
 }
