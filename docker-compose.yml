@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  ######################################################
+                        # common
+  ######################################################
+  quote.postgres:
+    container_name: quote_postgres 
+    image: postgres:16.3-alpine3.19
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "pass"
+    networks:
+      - canary_net
+    volumes:
+      # - ./_cache_/db:/var/lib/postgresql/data
+      - ./scripts/docker-postgres-init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s 
+      timeout: 10s
+      retries: 10
+
+  quote.localstack:
+    image: localstack/localstack:4.0.3
+    container_name: quote_localstack 
+    environment:
+      - SERVICES=sqs
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - LAMBDA_EXECUTOR=docker
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    networks:
+      - canary_net
+    ports:
+      - "4566:4566"
+      - "4571-4599:4571-4599"
+    # volumes:
+    #   - "./_cache_/localstack:/tmp/localstack"
+
+  ######################################################
+                          # ci 
+  ######################################################
+  quote.ci:
+    container_name: quote_ci
+    hostname: "quote.ci"
+    networks:
+      - canary_net
+    build:
+      context: .
+      dockerfile: ./docker/ci/Dockerfile.ci
+    profiles:
+      - ci
+    volumes:
+      - .:/go/src/app
+    depends_on:
+      quote.postgres:
+        condition: service_healthy
+
+  ######################################################
+                      # application 
+  ######################################################
+
+networks:
+  canary_net:
+    name: canary_net
