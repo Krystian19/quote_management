@@ -11,11 +11,11 @@ import (
 )
 
 type InventoryItem struct {
-	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
-	Name      string
-	Desc      string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID          uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	Name        string
+	Description string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func (InventoryItem) TableName() string {
@@ -27,9 +27,6 @@ var InventoryItemFactory = factory.NewFactory(
 ).
 	Attr("Name", func(args factory.Args) (interface{}, error) {
 		return faker.New().Address().City(), nil
-	}).
-	Attr("Desc", func(args factory.Args) (interface{}, error) {
-		return faker.New().Lorem().Sentence(4), nil
 	})
 
 func (d *DB) CreateInventoryItem(newItem InventoryItem, txn *Txn) (*InventoryItem, error) {

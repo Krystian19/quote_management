@@ -11,7 +11,6 @@ import (
 type Tax struct {
 	ID          uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
 	Name        string
-	Desc        string
 	TaxRate     float64
 	EffectiveAt time.Time
 	CreatedAt   time.Time
@@ -27,9 +26,6 @@ var TaxFactory = factory.NewFactory(
 ).
 	Attr("Name", func(args factory.Args) (interface{}, error) {
 		return faker.New().Address().City(), nil
-	}).
-	Attr("Desc", func(args factory.Args) (interface{}, error) {
-		return faker.New().Lorem().Sentence(4), nil
 	}).
 	Attr("TaxRate", func(args factory.Args) (interface{}, error) {
 		return float64(1.0), nil
