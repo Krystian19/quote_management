@@ -2,7 +2,6 @@ package db
 
 import (
 	"github.com/google/uuid"
-	"github.com/samber/lo"
 )
 
 type QuoteTax struct {
@@ -16,20 +15,18 @@ func (QuoteTax) TableName() string {
 }
 
 func (d *DB) CreateQuoteTaxes(
-	taintScanId uuid.UUID,
 	quoteTaxes []*QuoteTax,
 	txn *Txn,
 ) error {
-	items :=
-		lo.Map(quoteTaxes, func(c *QuoteTax, idx int) *QuoteTax {
-			c.QuoteId = taintScanId
+	return d.getQuery(txn).Model(QuoteTax{}).Create(quoteTaxes).Error
+}
 
-			return c
-		})
+func (d *DB) GetQuoteTaxes(
+	quoteId uuid.UUID,
+	txn *Txn,
+) ([]*QuoteTax, error) {
+	var res []*QuoteTax
+	err := d.getQuery(txn).Where("quote_id = ?", quoteId).Find(&res).Error
 
-	if err := d.getQuery(txn).Model(QuoteTax{}).Create(items).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return res, err
 }

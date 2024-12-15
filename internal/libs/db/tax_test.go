@@ -40,15 +40,15 @@ func TestGetAllTaxes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	found_taxes, err := test_db.GetAllTaxes(nil)
+	foundTaxes, err := test_db.GetAllTaxes(nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	require.NotEmpty(t, found_taxes)
+	require.NotEmpty(t, foundTaxes)
 
 	require.True(t,
-		lo.ContainsBy(found_taxes, func(tax *db.Tax) bool {
+		lo.ContainsBy(foundTaxes, func(tax *db.Tax) bool {
 			return tax.ID == createdTax.ID
 		}),
 	)
