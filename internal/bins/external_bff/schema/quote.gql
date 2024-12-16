@@ -1,0 +1,11 @@
+type Quote {
+  id: UUID!
+  accountId: UUID!
+  PaymentId: UUID!
+  createdAt: String!
+  updatedAt: String!
+}
+
+extend type Query {
+  getQuote(id: UUID!): Quote
+}

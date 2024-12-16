@@ -7,6 +7,9 @@ test:
 test-no-cache:
 	go test ./internal/... -count=1 -timeout 20s
 
+gqlgen:
+	(cd internal/bins/external_bff && go run github.com/99designs/gqlgen@v0.17.49)
+
 external-bff-build:
 	go build \
 		-ldflags "-s -w" \

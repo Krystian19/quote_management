@@ -1,0 +1,19 @@
+schema:
+  - "schema/**/*.gql"
+
+exec:
+  filename: generated.go
+  package: external_bff
+
+model:
+  filename: generated_models.go
+  package: external_bff
+
+autobind:
+  - "github.com/Krystian19/quote_management/internal/libs/db"
+
+models:
+  # general
+  UUID:
+    model:
+      - github.com/99designs/gqlgen/graphql.UUID
