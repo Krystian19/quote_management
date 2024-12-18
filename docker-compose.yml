@@ -45,21 +45,6 @@ services:
   ######################################################
                           # ci 
   ######################################################
-  quote.redis:
-    container_name: quote_redis_test
-    networks:
-      - canary_net
-    image: redis:7.2.3-alpine
-    profiles:
-      - ci
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 2s 
-      timeout: 5s
-      retries: 3
-
   quote.ci:
     container_name: quote_ci
     hostname: "quote.ci"

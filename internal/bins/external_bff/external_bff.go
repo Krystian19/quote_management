@@ -25,11 +25,7 @@ type Server struct {
 
 type Opts struct {
 	Port string
-
-	// should be disabled by default
-	AllowPlayground bool
-
-	DB *db.DB
+	DB   *db.DB
 }
 
 func New(opts Opts) Server {

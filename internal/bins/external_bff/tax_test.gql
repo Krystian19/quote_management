@@ -1,3 +1,14 @@
+mutation CreateTax($input: CreateTaxInput!) {
+  createTax(fields: $input) {
+    id
+    name
+    taxRate
+    effectiveAt
+    createdAt
+    updatedAt
+  }
+}
+
 query getAllTaxes {
   getAllTaxes {
     id

@@ -9,6 +9,61 @@ import (
 	"github.com/google/uuid"
 )
 
+// CreateTaxCreateTax includes the requested fields of the GraphQL type Tax.
+type CreateTaxCreateTax struct {
+	Id          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	TaxRate     float64   `json:"taxRate"`
+	EffectiveAt string    `json:"effectiveAt"`
+	CreatedAt   string    `json:"createdAt"`
+	UpdatedAt   string    `json:"updatedAt"`
+}
+
+// GetId returns CreateTaxCreateTax.Id, and is useful for accessing the field via an interface.
+func (v *CreateTaxCreateTax) GetId() uuid.UUID { return v.Id }
+
+// GetName returns CreateTaxCreateTax.Name, and is useful for accessing the field via an interface.
+func (v *CreateTaxCreateTax) GetName() string { return v.Name }
+
+// GetTaxRate returns CreateTaxCreateTax.TaxRate, and is useful for accessing the field via an interface.
+func (v *CreateTaxCreateTax) GetTaxRate() float64 { return v.TaxRate }
+
+// GetEffectiveAt returns CreateTaxCreateTax.EffectiveAt, and is useful for accessing the field via an interface.
+func (v *CreateTaxCreateTax) GetEffectiveAt() string { return v.EffectiveAt }
+
+// GetCreatedAt returns CreateTaxCreateTax.CreatedAt, and is useful for accessing the field via an interface.
+func (v *CreateTaxCreateTax) GetCreatedAt() string { return v.CreatedAt }
+
+// GetUpdatedAt returns CreateTaxCreateTax.UpdatedAt, and is useful for accessing the field via an interface.
+func (v *CreateTaxCreateTax) GetUpdatedAt() string { return v.UpdatedAt }
+
+type CreateTaxInput struct {
+	Name    string  `json:"name"`
+	TaxRate float64 `json:"taxRate"`
+}
+
+// GetName returns CreateTaxInput.Name, and is useful for accessing the field via an interface.
+func (v *CreateTaxInput) GetName() string { return v.Name }
+
+// GetTaxRate returns CreateTaxInput.TaxRate, and is useful for accessing the field via an interface.
+func (v *CreateTaxInput) GetTaxRate() float64 { return v.TaxRate }
+
+// CreateTaxResponse is returned by CreateTax on success.
+type CreateTaxResponse struct {
+	CreateTax CreateTaxCreateTax `json:"createTax"`
+}
+
+// GetCreateTax returns CreateTaxResponse.CreateTax, and is useful for accessing the field via an interface.
+func (v *CreateTaxResponse) GetCreateTax() CreateTaxCreateTax { return v.CreateTax }
+
+// __CreateTaxInput is used internally by genqlient
+type __CreateTaxInput struct {
+	Input CreateTaxInput `json:"input"`
+}
+
+// GetInput returns __CreateTaxInput.Input, and is useful for accessing the field via an interface.
+func (v *__CreateTaxInput) GetInput() CreateTaxInput { return v.Input }
+
 // getAllTaxesGetAllTaxesTax includes the requested fields of the GraphQL type Tax.
 type getAllTaxesGetAllTaxesTax struct {
 	Id          uuid.UUID `json:"id"`
@@ -44,6 +99,46 @@ type getAllTaxesResponse struct {
 
 // GetGetAllTaxes returns getAllTaxesResponse.GetAllTaxes, and is useful for accessing the field via an interface.
 func (v *getAllTaxesResponse) GetGetAllTaxes() []getAllTaxesGetAllTaxesTax { return v.GetAllTaxes }
+
+// The query or mutation executed by CreateTax.
+const CreateTax_Operation = `
+mutation CreateTax ($input: CreateTaxInput!) {
+	createTax(fields: $input) {
+		id
+		name
+		taxRate
+		effectiveAt
+		createdAt
+		updatedAt
+	}
+}
+`
+
+func CreateTax(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input CreateTaxInput,
+) (*CreateTaxResponse, error) {
+	req_ := &graphql.Request{
+		OpName: "CreateTax",
+		Query:  CreateTax_Operation,
+		Variables: &__CreateTaxInput{
+			Input: input,
+		},
+	}
+	var err_ error
+
+	var data_ CreateTaxResponse
+	resp_ := &graphql.Response{Data: &data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return &data_, err_
+}
 
 // The query or mutation executed by getAllTaxes.
 const getAllTaxes_Operation = `
