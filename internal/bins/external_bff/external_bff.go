@@ -77,5 +77,7 @@ func newResolver(opts resolverOpts) resolver {
 }
 
 type queryResolver struct{ resolver }
+type mutationResolver struct{ resolver }
 
-func (r resolver) Query() QueryResolver { return queryResolver{r} }
+func (r resolver) Query() QueryResolver       { return queryResolver{r} }
+func (r resolver) Mutation() MutationResolver { return mutationResolver{r} }

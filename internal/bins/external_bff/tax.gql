@@ -2,14 +2,20 @@ type Tax {
   id: UUID!
   name: String!
   taxRate: Float!
+  effectiveAt: String!
   createdAt: String!
   updatedAt: String!
 }
 
 extend type Query {
-  getTax(id: UUID!): Tax
+  getAllTaxes: [Tax!]!
 }
 
-# extend type Mutation {
-#   getTax(id: UUID!): Quote
-# }
+input CreateTaxInput {
+  name: String!
+  taxRate: Float!
+}
+
+extend type Mutation {
+  createTax(fields: CreateTaxInput!): Tax!
+}
