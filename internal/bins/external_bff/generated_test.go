@@ -237,6 +237,7 @@ type GetQuoteGetQuote struct {
 	Items     []GetQuoteGetQuoteItemsQuoteItem         `json:"Items"`
 	Taxes     []GetQuoteGetQuoteTaxesQuoteTax          `json:"Taxes"`
 	Conflicts []GetQuoteGetQuoteConflictsQuoteConflict `json:"Conflicts"`
+	Total     float64                                  `json:"Total"`
 }
 
 // GetId returns GetQuoteGetQuote.Id, and is useful for accessing the field via an interface.
@@ -258,6 +259,9 @@ func (v *GetQuoteGetQuote) GetTaxes() []GetQuoteGetQuoteTaxesQuoteTax { return v
 func (v *GetQuoteGetQuote) GetConflicts() []GetQuoteGetQuoteConflictsQuoteConflict {
 	return v.Conflicts
 }
+
+// GetTotal returns GetQuoteGetQuote.Total, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuote) GetTotal() float64 { return v.Total }
 
 // GetQuoteGetQuoteConflictsQuoteConflict includes the requested fields of the GraphQL type QuoteConflict.
 type GetQuoteGetQuoteConflictsQuoteConflict struct {
@@ -706,6 +710,7 @@ query GetQuote ($id: UUID!) {
 			itemId
 			reason
 		}
+		Total
 	}
 }
 `

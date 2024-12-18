@@ -95,6 +95,7 @@ type ComplexityRoot struct {
 		Items     func(childComplexity int) int
 		PaymentId func(childComplexity int) int
 		Taxes     func(childComplexity int) int
+		Total     func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
 	}
 
@@ -155,6 +156,7 @@ type QuoteResolver interface {
 	Items(ctx context.Context, obj *db.Quote) ([]*db.QuoteItem, error)
 	Taxes(ctx context.Context, obj *db.Quote) ([]*db.QuoteTax, error)
 	Conflicts(ctx context.Context, obj *db.Quote) ([]*QuoteConflict, error)
+	Total(ctx context.Context, obj *db.Quote) (float64, error)
 	CreatedAt(ctx context.Context, obj *db.Quote) (string, error)
 	UpdatedAt(ctx context.Context, obj *db.Quote) (string, error)
 }
@@ -426,6 +428,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Quote.Taxes(childComplexity), true
+
+	case "Quote.Total":
+		if e.complexity.Quote.Total == nil {
+			break
+		}
+
+		return e.complexity.Quote.Total(childComplexity), true
 
 	case "Quote.updatedAt":
 		if e.complexity.Quote.UpdatedAt == nil {
@@ -1556,6 +1565,8 @@ func (ec *executionContext) fieldContext_Mutation_createQuote(ctx context.Contex
 				return ec.fieldContext_Quote_Taxes(ctx, field)
 			case "Conflicts":
 				return ec.fieldContext_Quote_Conflicts(ctx, field)
+			case "Total":
+				return ec.fieldContext_Quote_Total(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Quote_createdAt(ctx, field)
 			case "updatedAt":
@@ -1870,6 +1881,8 @@ func (ec *executionContext) fieldContext_Query_getQuote(ctx context.Context, fie
 				return ec.fieldContext_Quote_Taxes(ctx, field)
 			case "Conflicts":
 				return ec.fieldContext_Quote_Conflicts(ctx, field)
+			case "Total":
+				return ec.fieldContext_Quote_Total(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Quote_createdAt(ctx, field)
 			case "updatedAt":
@@ -1943,6 +1956,8 @@ func (ec *executionContext) fieldContext_Query_getQuotes(_ context.Context, fiel
 				return ec.fieldContext_Quote_Taxes(ctx, field)
 			case "Conflicts":
 				return ec.fieldContext_Quote_Conflicts(ctx, field)
+			case "Total":
+				return ec.fieldContext_Quote_Total(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Quote_createdAt(ctx, field)
 			case "updatedAt":
@@ -2425,6 +2440,50 @@ func (ec *executionContext) fieldContext_Quote_Conflicts(_ context.Context, fiel
 				return ec.fieldContext_QuoteConflict_reason(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type QuoteConflict", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Quote_Total(ctx context.Context, field graphql.CollectedField, obj *db.Quote) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Quote_Total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Quote().Total(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Quote_Total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Quote",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5803,6 +5862,42 @@ func (ec *executionContext) _Quote(ctx context.Context, sel ast.SelectionSet, ob
 					}
 				}()
 				res = ec._Quote_Conflicts(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "Total":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Quote_Total(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

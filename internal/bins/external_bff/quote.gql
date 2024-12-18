@@ -5,6 +5,7 @@ type Quote {
   Items: [QuoteItem!]!
   Taxes: [QuoteTax!]!
   Conflicts: [QuoteConflict!]!
+  Total: Float!
   createdAt: String!
   updatedAt: String!
 }

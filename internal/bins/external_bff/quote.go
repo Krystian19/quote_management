@@ -124,3 +124,23 @@ func (r quoteResolver) Conflicts(ctx context.Context, obj *db.Quote) ([]*QuoteCo
 
 	return res, nil
 }
+
+func (r quoteResolver) Total(ctx context.Context, obj *db.Quote) (float64, error) {
+	var total float64
+
+	foundQuoteItems, err := r.db.GetQuoteItems(obj.ID, nil)
+	if err != nil {
+		return 0, err
+	}
+
+	for _, qit := range foundQuoteItems {
+		foundPrice, err := r.db.GetInventoryItemPrice(qit.ItemPriceId, nil)
+		if err != nil {
+			return 0, err
+		}
+
+		total += foundPrice.Price * float64(qit.Quantity)
+	}
+
+	return total, nil
+}
