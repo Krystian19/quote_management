@@ -9,6 +9,15 @@ CREATE TABLE tax (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+INSERT INTO
+    tax (id, name, tax_rate)
+VALUES
+    (
+        '94b6c275-0293-477a-be70-2f05484f9f0a',
+        'Dummy state tax',
+        12.5
+    ) ON CONFLICT (id) DO NOTHING;
+
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
