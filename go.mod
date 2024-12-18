@@ -3,6 +3,7 @@ module github.com/Krystian19/quote_management
 require (
 	github.com/99designs/gqlgen v0.17.49
 	github.com/bluele/factory-go v0.0.1
+	github.com/enescakir/emoji v1.0.0
 	github.com/go-chi/chi/v5 v5.2.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redsync/redsync/v4 v4.13.0

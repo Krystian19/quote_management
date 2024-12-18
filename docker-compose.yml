@@ -46,7 +46,7 @@ services:
                           # ci 
   ######################################################
   quote.redis:
-    container_name: aurora_btc_redis_test
+    container_name: quote_redis_test
     networks:
       - canary_net
     image: redis:7.2.3-alpine
@@ -81,6 +81,20 @@ services:
   ######################################################
                       # application 
   ######################################################
+  quote.external.api:
+    container_name: quote_external_api 
+    networks:
+      - canary_net
+    build:
+      context: .
+      dockerfile: ./docker/external-bff/Dockerfile
+    profiles:
+      - app 
+    ports:
+      - "4000:4000"
+    depends_on:
+      quote.postgres:
+        condition: service_healthy
 
 networks:
   canary_net:

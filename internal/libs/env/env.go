@@ -12,6 +12,8 @@ type Env struct {
 
 	DB_URL      string
 	DB_TEST_URL string
+
+	EXTERNAL_BFF_PORT string
 }
 
 func getEnv(key, fallback string) string {
@@ -50,7 +52,9 @@ func GetEnv() Env {
 	return Env{
 		REDIS_TEST_URL: getEnv("REDIS_TEST_URL", "quote.redis:6379"),
 
-		DB_URL:      getEnv("DB_URL", "host=aurora.postgres port=5432 user=postgres password=pass dbname=aurora sslmode=disable"),
-		DB_TEST_URL: getEnv("DB_TEST_URL", "host=aurora.postgres port=5432 user=postgres password=pass dbname=aurora_test sslmode=disable"),
+		DB_URL:      getEnv("DB_URL", "host=quote.postgres port=5432 user=postgres password=pass dbname=quote sslmode=disable"),
+		DB_TEST_URL: getEnv("DB_TEST_URL", "host=quote.postgres port=5432 user=postgres password=pass dbname=quote_test sslmode=disable"),
+
+		EXTERNAL_BFF_PORT: getEnv("EXTERNAL_BFF_PORT", "4000"),
 	}
 }

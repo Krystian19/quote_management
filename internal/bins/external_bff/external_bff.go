@@ -18,8 +18,7 @@ const (
 )
 
 type Server struct {
-	allowPlayground bool
-	port            string
+	port string
 
 	resolver resolver
 }
@@ -35,8 +34,7 @@ type Opts struct {
 
 func New(opts Opts) Server {
 	return Server{
-		allowPlayground: opts.AllowPlayground,
-		port:            opts.Port,
+		port: opts.Port,
 
 		resolver: newResolver(resolverOpts{
 			DB: opts.DB,
@@ -55,13 +53,10 @@ func (s *Server) Run() error {
 		Resolvers: s.resolver,
 	}))
 
-	if s.allowPlayground {
-		gqlSrv.Use(extension.Introspection{})
-		gqlSrv.Use(apollotracing.Tracer{})
+	gqlSrv.Use(extension.Introspection{})
+	gqlSrv.Use(apollotracing.Tracer{})
 
-		router.Handle("/", playground.Handler("Playground", GQLEndpoint))
-	}
-
+	router.Handle("/", playground.Handler("Playground", GQLEndpoint))
 	router.Handle(GQLEndpoint, gqlSrv)
 
 	return http.ListenAndServe(":"+s.port, router)

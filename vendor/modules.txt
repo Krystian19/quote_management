@@ -94,6 +94,9 @@ github.com/elastic/go-sysinfo/types
 # github.com/elastic/go-windows v1.0.1
 ## explicit
 github.com/elastic/go-windows
+# github.com/enescakir/emoji v1.0.0
+## explicit; go 1.13
+github.com/enescakir/emoji
 # github.com/go-chi/chi/v5 v5.2.0
 ## explicit; go 1.14
 github.com/go-chi/chi/v5

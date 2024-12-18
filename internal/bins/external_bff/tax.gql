@@ -1,0 +1,15 @@
+type Tax {
+  id: UUID!
+  name: String!
+  taxRate: Float!
+  createdAt: String!
+  updatedAt: String!
+}
+
+extend type Query {
+  getTax(id: UUID!): Tax
+}
+
+# extend type Mutation {
+#   getTax(id: UUID!): Quote
+# }
