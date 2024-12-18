@@ -45,6 +45,8 @@ type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
 	Quote() QuoteResolver
+	QuoteItem() QuoteItemResolver
+	QuoteTax() QuoteTaxResolver
 	Tax() TaxResolver
 }
 
@@ -90,13 +92,30 @@ type ComplexityRoot struct {
 		Conflicts func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
+		Items     func(childComplexity int) int
 		PaymentId func(childComplexity int) int
+		Taxes     func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
 	}
 
 	QuoteConflict struct {
 		ItemID func(childComplexity int) int
 		Reason func(childComplexity int) int
+	}
+
+	QuoteItem struct {
+		ID          func(childComplexity int) int
+		Item        func(childComplexity int) int
+		ItemId      func(childComplexity int) int
+		ItemPrice   func(childComplexity int) int
+		ItemPriceId func(childComplexity int) int
+		Quantity    func(childComplexity int) int
+	}
+
+	QuoteTax struct {
+		ID    func(childComplexity int) int
+		Tax   func(childComplexity int) int
+		TaxId func(childComplexity int) int
 	}
 
 	Tax struct {
@@ -133,9 +152,19 @@ type QueryResolver interface {
 	GetAllTaxes(ctx context.Context) ([]*db.Tax, error)
 }
 type QuoteResolver interface {
+	Items(ctx context.Context, obj *db.Quote) ([]*db.QuoteItem, error)
+	Taxes(ctx context.Context, obj *db.Quote) ([]*db.QuoteTax, error)
 	Conflicts(ctx context.Context, obj *db.Quote) ([]*QuoteConflict, error)
 	CreatedAt(ctx context.Context, obj *db.Quote) (string, error)
 	UpdatedAt(ctx context.Context, obj *db.Quote) (string, error)
+}
+type QuoteItemResolver interface {
+	Item(ctx context.Context, obj *db.QuoteItem) (*db.InventoryItem, error)
+
+	ItemPrice(ctx context.Context, obj *db.QuoteItem) (*db.InventoryItemPrice, error)
+}
+type QuoteTaxResolver interface {
+	Tax(ctx context.Context, obj *db.QuoteTax) (*db.Tax, error)
 }
 type TaxResolver interface {
 	EffectiveAt(ctx context.Context, obj *db.Tax) (string, error)
@@ -377,12 +406,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Quote.ID(childComplexity), true
 
+	case "Quote.Items":
+		if e.complexity.Quote.Items == nil {
+			break
+		}
+
+		return e.complexity.Quote.Items(childComplexity), true
+
 	case "Quote.paymentId":
 		if e.complexity.Quote.PaymentId == nil {
 			break
 		}
 
 		return e.complexity.Quote.PaymentId(childComplexity), true
+
+	case "Quote.Taxes":
+		if e.complexity.Quote.Taxes == nil {
+			break
+		}
+
+		return e.complexity.Quote.Taxes(childComplexity), true
 
 	case "Quote.updatedAt":
 		if e.complexity.Quote.UpdatedAt == nil {
@@ -404,6 +447,69 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.QuoteConflict.Reason(childComplexity), true
+
+	case "QuoteItem.id":
+		if e.complexity.QuoteItem.ID == nil {
+			break
+		}
+
+		return e.complexity.QuoteItem.ID(childComplexity), true
+
+	case "QuoteItem.Item":
+		if e.complexity.QuoteItem.Item == nil {
+			break
+		}
+
+		return e.complexity.QuoteItem.Item(childComplexity), true
+
+	case "QuoteItem.itemId":
+		if e.complexity.QuoteItem.ItemId == nil {
+			break
+		}
+
+		return e.complexity.QuoteItem.ItemId(childComplexity), true
+
+	case "QuoteItem.ItemPrice":
+		if e.complexity.QuoteItem.ItemPrice == nil {
+			break
+		}
+
+		return e.complexity.QuoteItem.ItemPrice(childComplexity), true
+
+	case "QuoteItem.itemPriceId":
+		if e.complexity.QuoteItem.ItemPriceId == nil {
+			break
+		}
+
+		return e.complexity.QuoteItem.ItemPriceId(childComplexity), true
+
+	case "QuoteItem.quantity":
+		if e.complexity.QuoteItem.Quantity == nil {
+			break
+		}
+
+		return e.complexity.QuoteItem.Quantity(childComplexity), true
+
+	case "QuoteTax.id":
+		if e.complexity.QuoteTax.ID == nil {
+			break
+		}
+
+		return e.complexity.QuoteTax.ID(childComplexity), true
+
+	case "QuoteTax.Tax":
+		if e.complexity.QuoteTax.Tax == nil {
+			break
+		}
+
+		return e.complexity.QuoteTax.Tax(childComplexity), true
+
+	case "QuoteTax.taxId":
+		if e.complexity.QuoteTax.TaxId == nil {
+			break
+		}
+
+		return e.complexity.QuoteTax.TaxId(childComplexity), true
 
 	case "Tax.createdAt":
 		if e.complexity.Tax.CreatedAt == nil {
@@ -1444,6 +1550,10 @@ func (ec *executionContext) fieldContext_Mutation_createQuote(ctx context.Contex
 				return ec.fieldContext_Quote_accountId(ctx, field)
 			case "paymentId":
 				return ec.fieldContext_Quote_paymentId(ctx, field)
+			case "Items":
+				return ec.fieldContext_Quote_Items(ctx, field)
+			case "Taxes":
+				return ec.fieldContext_Quote_Taxes(ctx, field)
 			case "Conflicts":
 				return ec.fieldContext_Quote_Conflicts(ctx, field)
 			case "createdAt":
@@ -1754,6 +1864,10 @@ func (ec *executionContext) fieldContext_Query_getQuote(ctx context.Context, fie
 				return ec.fieldContext_Quote_accountId(ctx, field)
 			case "paymentId":
 				return ec.fieldContext_Quote_paymentId(ctx, field)
+			case "Items":
+				return ec.fieldContext_Quote_Items(ctx, field)
+			case "Taxes":
+				return ec.fieldContext_Quote_Taxes(ctx, field)
 			case "Conflicts":
 				return ec.fieldContext_Quote_Conflicts(ctx, field)
 			case "createdAt":
@@ -1823,6 +1937,10 @@ func (ec *executionContext) fieldContext_Query_getQuotes(_ context.Context, fiel
 				return ec.fieldContext_Quote_accountId(ctx, field)
 			case "paymentId":
 				return ec.fieldContext_Quote_paymentId(ctx, field)
+			case "Items":
+				return ec.fieldContext_Quote_Items(ctx, field)
+			case "Taxes":
+				return ec.fieldContext_Quote_Taxes(ctx, field)
 			case "Conflicts":
 				return ec.fieldContext_Quote_Conflicts(ctx, field)
 			case "createdAt":
@@ -2152,6 +2270,116 @@ func (ec *executionContext) fieldContext_Quote_paymentId(_ context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Quote_Items(ctx context.Context, field graphql.CollectedField, obj *db.Quote) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Quote_Items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Quote().Items(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*db.QuoteItem)
+	fc.Result = res
+	return ec.marshalNQuoteItem2ᚕᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐQuoteItemᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Quote_Items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Quote",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_QuoteItem_id(ctx, field)
+			case "itemId":
+				return ec.fieldContext_QuoteItem_itemId(ctx, field)
+			case "Item":
+				return ec.fieldContext_QuoteItem_Item(ctx, field)
+			case "itemPriceId":
+				return ec.fieldContext_QuoteItem_itemPriceId(ctx, field)
+			case "ItemPrice":
+				return ec.fieldContext_QuoteItem_ItemPrice(ctx, field)
+			case "quantity":
+				return ec.fieldContext_QuoteItem_quantity(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type QuoteItem", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Quote_Taxes(ctx context.Context, field graphql.CollectedField, obj *db.Quote) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Quote_Taxes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Quote().Taxes(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*db.QuoteTax)
+	fc.Result = res
+	return ec.marshalNQuoteTax2ᚕᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐQuoteTaxᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Quote_Taxes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Quote",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_QuoteTax_id(ctx, field)
+			case "taxId":
+				return ec.fieldContext_QuoteTax_taxId(ctx, field)
+			case "Tax":
+				return ec.fieldContext_QuoteTax_Tax(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type QuoteTax", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Quote_Conflicts(ctx context.Context, field graphql.CollectedField, obj *db.Quote) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Quote_Conflicts(ctx, field)
 	if err != nil {
@@ -2373,6 +2601,440 @@ func (ec *executionContext) fieldContext_QuoteConflict_reason(_ context.Context,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type QuoteConflictType does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QuoteItem_id(ctx context.Context, field graphql.CollectedField, obj *db.QuoteItem) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QuoteItem_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QuoteItem_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QuoteItem",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QuoteItem_itemId(ctx context.Context, field graphql.CollectedField, obj *db.QuoteItem) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QuoteItem_itemId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ItemId, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QuoteItem_itemId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QuoteItem",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QuoteItem_Item(ctx context.Context, field graphql.CollectedField, obj *db.QuoteItem) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QuoteItem_Item(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.QuoteItem().Item(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*db.InventoryItem)
+	fc.Result = res
+	return ec.marshalNInventoryItem2ᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐInventoryItem(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QuoteItem_Item(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QuoteItem",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_InventoryItem_id(ctx, field)
+			case "name":
+				return ec.fieldContext_InventoryItem_name(ctx, field)
+			case "currentPrice":
+				return ec.fieldContext_InventoryItem_currentPrice(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_InventoryItem_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_InventoryItem_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type InventoryItem", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QuoteItem_itemPriceId(ctx context.Context, field graphql.CollectedField, obj *db.QuoteItem) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QuoteItem_itemPriceId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ItemPriceId, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QuoteItem_itemPriceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QuoteItem",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QuoteItem_ItemPrice(ctx context.Context, field graphql.CollectedField, obj *db.QuoteItem) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QuoteItem_ItemPrice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.QuoteItem().ItemPrice(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*db.InventoryItemPrice)
+	fc.Result = res
+	return ec.marshalNInventoryItemPrice2ᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐInventoryItemPrice(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QuoteItem_ItemPrice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QuoteItem",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_InventoryItemPrice_id(ctx, field)
+			case "inventoryItemId":
+				return ec.fieldContext_InventoryItemPrice_inventoryItemId(ctx, field)
+			case "price":
+				return ec.fieldContext_InventoryItemPrice_price(ctx, field)
+			case "version":
+				return ec.fieldContext_InventoryItemPrice_version(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_InventoryItemPrice_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type InventoryItemPrice", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QuoteItem_quantity(ctx context.Context, field graphql.CollectedField, obj *db.QuoteItem) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QuoteItem_quantity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Quantity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QuoteItem_quantity(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QuoteItem",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QuoteTax_id(ctx context.Context, field graphql.CollectedField, obj *db.QuoteTax) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QuoteTax_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QuoteTax_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QuoteTax",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QuoteTax_taxId(ctx context.Context, field graphql.CollectedField, obj *db.QuoteTax) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QuoteTax_taxId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TaxId, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QuoteTax_taxId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QuoteTax",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QuoteTax_Tax(ctx context.Context, field graphql.CollectedField, obj *db.QuoteTax) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QuoteTax_Tax(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.QuoteTax().Tax(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*db.Tax)
+	fc.Result = res
+	return ec.marshalNTax2ᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐTax(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QuoteTax_Tax(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QuoteTax",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Tax_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Tax_name(ctx, field)
+			case "taxRate":
+				return ec.fieldContext_Tax_taxRate(ctx, field)
+			case "effectiveAt":
+				return ec.fieldContext_Tax_effectiveAt(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Tax_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Tax_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Tax", field.Name)
 		},
 	}
 	return fc, nil
@@ -5059,6 +5721,78 @@ func (ec *executionContext) _Quote(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "paymentId":
 			out.Values[i] = ec._Quote_paymentId(ctx, field, obj)
+		case "Items":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Quote_Items(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "Taxes":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Quote_Taxes(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "Conflicts":
 			field := field
 
@@ -5211,6 +5945,212 @@ func (ec *executionContext) _QuoteConflict(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var quoteItemImplementors = []string{"QuoteItem"}
+
+func (ec *executionContext) _QuoteItem(ctx context.Context, sel ast.SelectionSet, obj *db.QuoteItem) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, quoteItemImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("QuoteItem")
+		case "id":
+			out.Values[i] = ec._QuoteItem_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "itemId":
+			out.Values[i] = ec._QuoteItem_itemId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "Item":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._QuoteItem_Item(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "itemPriceId":
+			out.Values[i] = ec._QuoteItem_itemPriceId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "ItemPrice":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._QuoteItem_ItemPrice(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "quantity":
+			out.Values[i] = ec._QuoteItem_quantity(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var quoteTaxImplementors = []string{"QuoteTax"}
+
+func (ec *executionContext) _QuoteTax(ctx context.Context, sel ast.SelectionSet, obj *db.QuoteTax) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, quoteTaxImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("QuoteTax")
+		case "id":
+			out.Values[i] = ec._QuoteTax_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "taxId":
+			out.Values[i] = ec._QuoteTax_taxId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "Tax":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._QuoteTax_Tax(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6035,6 +6975,114 @@ func (ec *executionContext) unmarshalNQuoteConflictType2githubᚗcomᚋKrystian1
 
 func (ec *executionContext) marshalNQuoteConflictType2githubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋbinsᚋexternal_bffᚐQuoteConflictType(ctx context.Context, sel ast.SelectionSet, v QuoteConflictType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNQuoteItem2ᚕᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐQuoteItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*db.QuoteItem) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNQuoteItem2ᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐQuoteItem(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNQuoteItem2ᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐQuoteItem(ctx context.Context, sel ast.SelectionSet, v *db.QuoteItem) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._QuoteItem(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNQuoteTax2ᚕᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐQuoteTaxᚄ(ctx context.Context, sel ast.SelectionSet, v []*db.QuoteTax) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNQuoteTax2ᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐQuoteTax(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNQuoteTax2ᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐQuoteTax(ctx context.Context, sel ast.SelectionSet, v *db.QuoteTax) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._QuoteTax(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

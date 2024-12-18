@@ -2,10 +2,26 @@ type Quote {
   id: UUID!
   accountId: UUID!
   paymentId: UUID
-  # Items: [InventoryItem!]!
+  Items: [QuoteItem!]!
+  Taxes: [QuoteTax!]!
   Conflicts: [QuoteConflict!]!
   createdAt: String!
   updatedAt: String!
+}
+
+type QuoteItem {
+  id: UUID!
+  itemId: UUID!
+  Item: InventoryItem!
+  itemPriceId: UUID!
+  ItemPrice: InventoryItemPrice!
+  quantity: Int!
+}
+
+type QuoteTax {
+  id: UUID!
+  taxId: UUID!
+  Tax: Tax!
 }
 
 extend type Query {

@@ -55,3 +55,17 @@ func (d *DB) GetLatestInventoryItemPrice(inventoryItemId uuid.UUID, txn *Txn) (*
 
 	return &res, nil
 }
+
+func (d *DB) GetInventoryItemPrice(id uuid.UUID, txn *Txn) (*InventoryItemPrice, error) {
+	var res InventoryItemPrice
+
+	if err := d.getQuery(txn).Where("id = ?", id).First(&res).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}

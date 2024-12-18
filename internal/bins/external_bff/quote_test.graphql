@@ -3,6 +3,20 @@ query GetQuote($id: UUID!) {
     id
     accountId
     paymentId
+    Items {
+      id
+      Item {
+        id
+        name
+      }
+    }
+    Taxes {
+      id
+      Tax {
+        id
+        name
+      }
+    }
     Conflicts {
       itemId
       reason

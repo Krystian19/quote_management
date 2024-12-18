@@ -234,6 +234,8 @@ type GetQuoteGetQuote struct {
 	Id        uuid.UUID                                `json:"id"`
 	AccountId uuid.UUID                                `json:"accountId"`
 	PaymentId uuid.UUID                                `json:"paymentId"`
+	Items     []GetQuoteGetQuoteItemsQuoteItem         `json:"Items"`
+	Taxes     []GetQuoteGetQuoteTaxesQuoteTax          `json:"Taxes"`
 	Conflicts []GetQuoteGetQuoteConflictsQuoteConflict `json:"Conflicts"`
 }
 
@@ -245,6 +247,12 @@ func (v *GetQuoteGetQuote) GetAccountId() uuid.UUID { return v.AccountId }
 
 // GetPaymentId returns GetQuoteGetQuote.PaymentId, and is useful for accessing the field via an interface.
 func (v *GetQuoteGetQuote) GetPaymentId() uuid.UUID { return v.PaymentId }
+
+// GetItems returns GetQuoteGetQuote.Items, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuote) GetItems() []GetQuoteGetQuoteItemsQuoteItem { return v.Items }
+
+// GetTaxes returns GetQuoteGetQuote.Taxes, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuote) GetTaxes() []GetQuoteGetQuoteTaxesQuoteTax { return v.Taxes }
 
 // GetConflicts returns GetQuoteGetQuote.Conflicts, and is useful for accessing the field via an interface.
 func (v *GetQuoteGetQuote) GetConflicts() []GetQuoteGetQuoteConflictsQuoteConflict {
@@ -262,6 +270,56 @@ func (v *GetQuoteGetQuoteConflictsQuoteConflict) GetItemId() uuid.UUID { return 
 
 // GetReason returns GetQuoteGetQuoteConflictsQuoteConflict.Reason, and is useful for accessing the field via an interface.
 func (v *GetQuoteGetQuoteConflictsQuoteConflict) GetReason() QuoteConflictType { return v.Reason }
+
+// GetQuoteGetQuoteItemsQuoteItem includes the requested fields of the GraphQL type QuoteItem.
+type GetQuoteGetQuoteItemsQuoteItem struct {
+	Id   uuid.UUID                                       `json:"id"`
+	Item GetQuoteGetQuoteItemsQuoteItemItemInventoryItem `json:"Item"`
+}
+
+// GetId returns GetQuoteGetQuoteItemsQuoteItem.Id, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuoteItemsQuoteItem) GetId() uuid.UUID { return v.Id }
+
+// GetItem returns GetQuoteGetQuoteItemsQuoteItem.Item, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuoteItemsQuoteItem) GetItem() GetQuoteGetQuoteItemsQuoteItemItemInventoryItem {
+	return v.Item
+}
+
+// GetQuoteGetQuoteItemsQuoteItemItemInventoryItem includes the requested fields of the GraphQL type InventoryItem.
+type GetQuoteGetQuoteItemsQuoteItemItemInventoryItem struct {
+	Id   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+}
+
+// GetId returns GetQuoteGetQuoteItemsQuoteItemItemInventoryItem.Id, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuoteItemsQuoteItemItemInventoryItem) GetId() uuid.UUID { return v.Id }
+
+// GetName returns GetQuoteGetQuoteItemsQuoteItemItemInventoryItem.Name, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuoteItemsQuoteItemItemInventoryItem) GetName() string { return v.Name }
+
+// GetQuoteGetQuoteTaxesQuoteTax includes the requested fields of the GraphQL type QuoteTax.
+type GetQuoteGetQuoteTaxesQuoteTax struct {
+	Id  uuid.UUID                        `json:"id"`
+	Tax GetQuoteGetQuoteTaxesQuoteTaxTax `json:"Tax"`
+}
+
+// GetId returns GetQuoteGetQuoteTaxesQuoteTax.Id, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuoteTaxesQuoteTax) GetId() uuid.UUID { return v.Id }
+
+// GetTax returns GetQuoteGetQuoteTaxesQuoteTax.Tax, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuoteTaxesQuoteTax) GetTax() GetQuoteGetQuoteTaxesQuoteTaxTax { return v.Tax }
+
+// GetQuoteGetQuoteTaxesQuoteTaxTax includes the requested fields of the GraphQL type Tax.
+type GetQuoteGetQuoteTaxesQuoteTaxTax struct {
+	Id   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+}
+
+// GetId returns GetQuoteGetQuoteTaxesQuoteTaxTax.Id, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuoteTaxesQuoteTaxTax) GetId() uuid.UUID { return v.Id }
+
+// GetName returns GetQuoteGetQuoteTaxesQuoteTaxTax.Name, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuoteTaxesQuoteTaxTax) GetName() string { return v.Name }
 
 // GetQuoteResponse is returned by GetQuote on success.
 type GetQuoteResponse struct {
@@ -630,6 +688,20 @@ query GetQuote ($id: UUID!) {
 		id
 		accountId
 		paymentId
+		Items {
+			id
+			Item {
+				id
+				name
+			}
+		}
+		Taxes {
+			id
+			Tax {
+				id
+				name
+			}
+		}
 		Conflicts {
 			itemId
 			reason

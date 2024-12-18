@@ -92,25 +92,13 @@ func (r quoteResolver) UpdatedAt(ctx context.Context, obj *db.Quote) (string, er
 	return obj.UpdatedAt.String(), nil
 }
 
-// func (r quoteResolver) Items(ctx context.Context, obj *db.Quote) ([]*db.InventoryItem, error) {
-// 	var res []*db.InventoryItem
+func (r quoteResolver) Items(ctx context.Context, obj *db.Quote) ([]*db.QuoteItem, error) {
+	return r.db.GetQuoteItems(obj.ID, nil)
+}
 
-// 	foundQuoteItems, err := r.db.GetQuoteItems(obj.ID, nil)
-// 	if err != nil {
-// 		return res, err
-// 	}
-
-// 	for _, qit := range foundQuoteItems {
-// 		foundItem, err := r.db.GetInventoryItem(qit.ItemId, nil)
-// 		if err != nil {
-// 			return []*db.InventoryItem{}, err
-// 		}
-
-// 		res = append(res, foundItem)
-// 	}
-
-// 	return res, nil
-// }
+func (r quoteResolver) Taxes(ctx context.Context, obj *db.Quote) ([]*db.QuoteTax, error) {
+	return r.db.GetQuoteTaxes(obj.ID, nil)
+}
 
 func (r quoteResolver) Conflicts(ctx context.Context, obj *db.Quote) ([]*QuoteConflict, error) {
 	var res []*QuoteConflict

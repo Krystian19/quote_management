@@ -59,3 +59,31 @@ func TestGetLatestsInventoryItemPrice(t *testing.T) {
 	require.NotNil(t, foundItemPrice)
 	require.Equal(t, *createdInventoryItemPrice, *foundItemPrice)
 }
+
+func TestGetInventoryItemPrice(t *testing.T) {
+	test_db, err := getDB()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dummyInventoryItem := db.InventoryItemFactory.MustCreate().(db.InventoryItem)
+	createdInventoryItem, err := test_db.CreateInventoryItem(dummyInventoryItem, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dummyInventoryItemPrice := db.InventoryItemPriceFactory.MustCreate().(db.InventoryItemPrice)
+	dummyInventoryItemPrice.InventoryItemId = createdInventoryItem.ID
+	createdInventoryItemPrice, err := test_db.CreateInventoryItemPrice(dummyInventoryItemPrice, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	foundItemPrice, err := test_db.GetInventoryItemPrice(createdInventoryItemPrice.ID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	require.NotNil(t, foundItemPrice)
+	require.Equal(t, *createdInventoryItemPrice, *foundItemPrice)
+}
