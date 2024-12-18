@@ -53,3 +53,29 @@ func TestGetAllTaxes(t *testing.T) {
 		}),
 	)
 }
+
+func TestCreateTaxes(t *testing.T) {
+	test_db, err := getDB()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dummyTax := db.TaxFactory.MustCreate().(db.Tax)
+
+	test_db.CreateTaxes([]*db.Tax{
+		&dummyTax,
+	}, nil)
+
+	foundTaxes, err := test_db.GetAllTaxes(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	require.NotEmpty(t, foundTaxes)
+
+	require.True(t,
+		lo.ContainsBy(foundTaxes, func(tax *db.Tax) bool {
+			return tax.Name == dummyTax.Name
+		}),
+	)
+}

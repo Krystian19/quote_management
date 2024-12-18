@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Krystian19/quote_management/internal/libs/db"
+	"github.com/samber/lo"
 )
 
 func (r queryResolver) GetAllTaxes(ctx context.Context) ([]*db.Tax, error) {
@@ -17,6 +18,19 @@ func (r mutationResolver) CreateTax(ctx context.Context, fields CreateTaxInput) 
 		TaxRate:     fields.TaxRate,
 		EffectiveAt: time.Now(),
 	}, nil)
+}
+
+func (r mutationResolver) CreateTaxes(ctx context.Context, fields []*CreateTaxInput) (bool, error) {
+	taxesToCreate := lo.Map(fields, func(f *CreateTaxInput, idx int) *db.Tax {
+		return &db.Tax{
+			Name:        f.Name,
+			TaxRate:     f.TaxRate,
+			EffectiveAt: time.Now(),
+		}
+	})
+
+	err := r.db.CreateTaxes(taxesToCreate, nil)
+	return true, err
 }
 
 type taxResolver struct{ resolver }

@@ -18,4 +18,5 @@ input CreateTaxInput {
 
 extend type Mutation {
   createTax(fields: CreateTaxInput!): Tax!
+  createTaxes(fields: [CreateTaxInput!]!): Boolean!
 }
