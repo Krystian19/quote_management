@@ -1,0 +1,24 @@
+query GetQuote($id: UUID!) {
+  getQuote(id: $id) {
+    id
+    accountId
+    paymentId
+    Conflicts {
+      itemId
+      reason
+    }
+  }
+}
+
+query GetAllQuotes {
+  getQuotes {
+    id
+    accountId
+  }
+}
+
+mutation CreateQuote($input: CreateQuoteInput!) {
+  createQuote(fields: $input) {
+    id
+  }
+}

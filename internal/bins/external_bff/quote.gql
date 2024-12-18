@@ -1,7 +1,8 @@
 type Quote {
   id: UUID!
   accountId: UUID!
-  paymentId: UUID!
+  paymentId: UUID
+  # Items: [InventoryItem!]!
   Conflicts: [QuoteConflict!]!
   createdAt: String!
   updatedAt: String!

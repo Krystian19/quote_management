@@ -46,6 +46,44 @@ type CreateInventoryItemsResponse struct {
 // GetCreateInventoryItems returns CreateInventoryItemsResponse.CreateInventoryItems, and is useful for accessing the field via an interface.
 func (v *CreateInventoryItemsResponse) GetCreateInventoryItems() bool { return v.CreateInventoryItems }
 
+// CreateQuoteCreateQuote includes the requested fields of the GraphQL type Quote.
+type CreateQuoteCreateQuote struct {
+	Id uuid.UUID `json:"id"`
+}
+
+// GetId returns CreateQuoteCreateQuote.Id, and is useful for accessing the field via an interface.
+func (v *CreateQuoteCreateQuote) GetId() uuid.UUID { return v.Id }
+
+type CreateQuoteInput struct {
+	AccountId uuid.UUID               `json:"accountId"`
+	Items     []CreateQuoteItemsInput `json:"items"`
+}
+
+// GetAccountId returns CreateQuoteInput.AccountId, and is useful for accessing the field via an interface.
+func (v *CreateQuoteInput) GetAccountId() uuid.UUID { return v.AccountId }
+
+// GetItems returns CreateQuoteInput.Items, and is useful for accessing the field via an interface.
+func (v *CreateQuoteInput) GetItems() []CreateQuoteItemsInput { return v.Items }
+
+type CreateQuoteItemsInput struct {
+	ItemId   uuid.UUID `json:"itemId"`
+	Quantity int       `json:"quantity"`
+}
+
+// GetItemId returns CreateQuoteItemsInput.ItemId, and is useful for accessing the field via an interface.
+func (v *CreateQuoteItemsInput) GetItemId() uuid.UUID { return v.ItemId }
+
+// GetQuantity returns CreateQuoteItemsInput.Quantity, and is useful for accessing the field via an interface.
+func (v *CreateQuoteItemsInput) GetQuantity() int { return v.Quantity }
+
+// CreateQuoteResponse is returned by CreateQuote on success.
+type CreateQuoteResponse struct {
+	CreateQuote CreateQuoteCreateQuote `json:"createQuote"`
+}
+
+// GetCreateQuote returns CreateQuoteResponse.CreateQuote, and is useful for accessing the field via an interface.
+func (v *CreateQuoteResponse) GetCreateQuote() CreateQuoteCreateQuote { return v.CreateQuote }
+
 // CreateTaxCreateTax includes the requested fields of the GraphQL type Tax.
 type CreateTaxCreateTax struct {
 	Id          uuid.UUID `json:"id"`
@@ -115,6 +153,26 @@ func (v *GetAllInventoryItemsResponse) GetGetAllInventoryItems() []GetAllInvento
 	return v.GetAllInventoryItems
 }
 
+// GetAllQuotesGetQuotesQuote includes the requested fields of the GraphQL type Quote.
+type GetAllQuotesGetQuotesQuote struct {
+	Id        uuid.UUID `json:"id"`
+	AccountId uuid.UUID `json:"accountId"`
+}
+
+// GetId returns GetAllQuotesGetQuotesQuote.Id, and is useful for accessing the field via an interface.
+func (v *GetAllQuotesGetQuotesQuote) GetId() uuid.UUID { return v.Id }
+
+// GetAccountId returns GetAllQuotesGetQuotesQuote.AccountId, and is useful for accessing the field via an interface.
+func (v *GetAllQuotesGetQuotesQuote) GetAccountId() uuid.UUID { return v.AccountId }
+
+// GetAllQuotesResponse is returned by GetAllQuotes on success.
+type GetAllQuotesResponse struct {
+	GetQuotes []GetAllQuotesGetQuotesQuote `json:"getQuotes"`
+}
+
+// GetGetQuotes returns GetAllQuotesResponse.GetQuotes, and is useful for accessing the field via an interface.
+func (v *GetAllQuotesResponse) GetGetQuotes() []GetAllQuotesGetQuotesQuote { return v.GetQuotes }
+
 // GetInventoryItemGetInventoryItem includes the requested fields of the GraphQL type InventoryItem.
 type GetInventoryItemGetInventoryItem struct {
 	Id           uuid.UUID                                                      `json:"id"`
@@ -171,6 +229,55 @@ func (v *GetInventoryItemResponse) GetGetInventoryItem() GetInventoryItemGetInve
 	return v.GetInventoryItem
 }
 
+// GetQuoteGetQuote includes the requested fields of the GraphQL type Quote.
+type GetQuoteGetQuote struct {
+	Id        uuid.UUID                                `json:"id"`
+	AccountId uuid.UUID                                `json:"accountId"`
+	PaymentId uuid.UUID                                `json:"paymentId"`
+	Conflicts []GetQuoteGetQuoteConflictsQuoteConflict `json:"Conflicts"`
+}
+
+// GetId returns GetQuoteGetQuote.Id, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuote) GetId() uuid.UUID { return v.Id }
+
+// GetAccountId returns GetQuoteGetQuote.AccountId, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuote) GetAccountId() uuid.UUID { return v.AccountId }
+
+// GetPaymentId returns GetQuoteGetQuote.PaymentId, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuote) GetPaymentId() uuid.UUID { return v.PaymentId }
+
+// GetConflicts returns GetQuoteGetQuote.Conflicts, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuote) GetConflicts() []GetQuoteGetQuoteConflictsQuoteConflict {
+	return v.Conflicts
+}
+
+// GetQuoteGetQuoteConflictsQuoteConflict includes the requested fields of the GraphQL type QuoteConflict.
+type GetQuoteGetQuoteConflictsQuoteConflict struct {
+	ItemId uuid.UUID         `json:"itemId"`
+	Reason QuoteConflictType `json:"reason"`
+}
+
+// GetItemId returns GetQuoteGetQuoteConflictsQuoteConflict.ItemId, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuoteConflictsQuoteConflict) GetItemId() uuid.UUID { return v.ItemId }
+
+// GetReason returns GetQuoteGetQuoteConflictsQuoteConflict.Reason, and is useful for accessing the field via an interface.
+func (v *GetQuoteGetQuoteConflictsQuoteConflict) GetReason() QuoteConflictType { return v.Reason }
+
+// GetQuoteResponse is returned by GetQuote on success.
+type GetQuoteResponse struct {
+	GetQuote GetQuoteGetQuote `json:"getQuote"`
+}
+
+// GetGetQuote returns GetQuoteResponse.GetQuote, and is useful for accessing the field via an interface.
+func (v *GetQuoteResponse) GetGetQuote() GetQuoteGetQuote { return v.GetQuote }
+
+type QuoteConflictType string
+
+const (
+	QuoteConflictTypePriceChanged   QuoteConflictType = "PRICE_CHANGED"
+	QuoteConflictTypeItemNotInStock QuoteConflictType = "ITEM_NOT_IN_STOCK"
+)
+
 // UpdateInventoryItemPriceResponse is returned by UpdateInventoryItemPrice on success.
 type UpdateInventoryItemPriceResponse struct {
 	UpdateInventoryItemPrice UpdateInventoryItemPriceUpdateInventoryItemPriceInventoryItem `json:"updateInventoryItemPrice"`
@@ -207,6 +314,14 @@ type __CreateInventoryItemsInput struct {
 // GetInput returns __CreateInventoryItemsInput.Input, and is useful for accessing the field via an interface.
 func (v *__CreateInventoryItemsInput) GetInput() []CreateInventoryItemInput { return v.Input }
 
+// __CreateQuoteInput is used internally by genqlient
+type __CreateQuoteInput struct {
+	Input CreateQuoteInput `json:"input"`
+}
+
+// GetInput returns __CreateQuoteInput.Input, and is useful for accessing the field via an interface.
+func (v *__CreateQuoteInput) GetInput() CreateQuoteInput { return v.Input }
+
 // __CreateTaxInput is used internally by genqlient
 type __CreateTaxInput struct {
 	Input CreateTaxInput `json:"input"`
@@ -222,6 +337,14 @@ type __GetInventoryItemInput struct {
 
 // GetId returns __GetInventoryItemInput.Id, and is useful for accessing the field via an interface.
 func (v *__GetInventoryItemInput) GetId() uuid.UUID { return v.Id }
+
+// __GetQuoteInput is used internally by genqlient
+type __GetQuoteInput struct {
+	Id uuid.UUID `json:"id"`
+}
+
+// GetId returns __GetQuoteInput.Id, and is useful for accessing the field via an interface.
+func (v *__GetQuoteInput) GetId() uuid.UUID { return v.Id }
 
 // __UpdateInventoryItemPriceInput is used internally by genqlient
 type __UpdateInventoryItemPriceInput struct {
@@ -319,6 +442,41 @@ func CreateInventoryItems(
 	return &data_, err_
 }
 
+// The query or mutation executed by CreateQuote.
+const CreateQuote_Operation = `
+mutation CreateQuote ($input: CreateQuoteInput!) {
+	createQuote(fields: $input) {
+		id
+	}
+}
+`
+
+func CreateQuote(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input CreateQuoteInput,
+) (*CreateQuoteResponse, error) {
+	req_ := &graphql.Request{
+		OpName: "CreateQuote",
+		Query:  CreateQuote_Operation,
+		Variables: &__CreateQuoteInput{
+			Input: input,
+		},
+	}
+	var err_ error
+
+	var data_ CreateQuoteResponse
+	resp_ := &graphql.Response{Data: &data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return &data_, err_
+}
+
 // The query or mutation executed by CreateTax.
 const CreateTax_Operation = `
 mutation CreateTax ($input: CreateTaxInput!) {
@@ -391,6 +549,38 @@ func GetAllInventoryItems(
 	return &data_, err_
 }
 
+// The query or mutation executed by GetAllQuotes.
+const GetAllQuotes_Operation = `
+query GetAllQuotes {
+	getQuotes {
+		id
+		accountId
+	}
+}
+`
+
+func GetAllQuotes(
+	ctx_ context.Context,
+	client_ graphql.Client,
+) (*GetAllQuotesResponse, error) {
+	req_ := &graphql.Request{
+		OpName: "GetAllQuotes",
+		Query:  GetAllQuotes_Operation,
+	}
+	var err_ error
+
+	var data_ GetAllQuotesResponse
+	resp_ := &graphql.Response{Data: &data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return &data_, err_
+}
+
 // The query or mutation executed by GetInventoryItem.
 const GetInventoryItem_Operation = `
 query GetInventoryItem ($id: UUID!) {
@@ -422,6 +612,47 @@ func GetInventoryItem(
 	var err_ error
 
 	var data_ GetInventoryItemResponse
+	resp_ := &graphql.Response{Data: &data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return &data_, err_
+}
+
+// The query or mutation executed by GetQuote.
+const GetQuote_Operation = `
+query GetQuote ($id: UUID!) {
+	getQuote(id: $id) {
+		id
+		accountId
+		paymentId
+		Conflicts {
+			itemId
+			reason
+		}
+	}
+}
+`
+
+func GetQuote(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	id uuid.UUID,
+) (*GetQuoteResponse, error) {
+	req_ := &graphql.Request{
+		OpName: "GetQuote",
+		Query:  GetQuote_Operation,
+		Variables: &__GetQuoteInput{
+			Id: id,
+		},
+	}
+	var err_ error
+
+	var data_ GetQuoteResponse
 	resp_ := &graphql.Response{Data: &data_}
 
 	err_ = client_.MakeRequest(
