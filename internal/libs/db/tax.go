@@ -1,11 +1,13 @@
 package db
 
 import (
+	"errors"
 	"time"
 
 	"github.com/bluele/factory-go/factory"
 	"github.com/google/uuid"
 	"github.com/jaswdr/faker"
+	"gorm.io/gorm"
 )
 
 type Tax struct {
@@ -40,6 +42,20 @@ func (d *DB) CreateTax(newTax Tax, txn *Txn) (*Tax, error) {
 	}
 
 	return &newTax, nil
+}
+
+func (d *DB) GetTax(id uuid.UUID, txn *Txn) (*Tax, error) {
+	var res *Tax
+
+	if err := d.getQuery(txn).Where("id = ?", id).First(&res).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return res, nil
 }
 
 func (d *DB) CreateTaxes(newTax []*Tax, txn *Txn) error {

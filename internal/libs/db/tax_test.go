@@ -28,6 +28,31 @@ func TestCreateTax(t *testing.T) {
 	require.Equal(t, dummyTax, *createdTax)
 }
 
+func TestGetTax(t *testing.T) {
+	test_db, err := getDB()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dummyTax := db.TaxFactory.MustCreate().(db.Tax)
+	createdTax, err := test_db.CreateTax(dummyTax, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	foundTax, err := test_db.GetTax(createdTax.ID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dummyTax.ID = foundTax.ID
+	dummyTax.EffectiveAt = foundTax.EffectiveAt
+	dummyTax.CreatedAt = foundTax.CreatedAt
+	dummyTax.UpdatedAt = foundTax.UpdatedAt
+
+	require.Equal(t, dummyTax, *foundTax)
+}
+
 func TestGetAllTaxes(t *testing.T) {
 	test_db, err := getDB()
 	if err != nil {
