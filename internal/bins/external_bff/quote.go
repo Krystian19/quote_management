@@ -91,3 +91,28 @@ func (r quoteResolver) CreatedAt(ctx context.Context, obj *db.Quote) (string, er
 func (r quoteResolver) UpdatedAt(ctx context.Context, obj *db.Quote) (string, error) {
 	return obj.UpdatedAt.String(), nil
 }
+
+func (r quoteResolver) Conflicts(ctx context.Context, obj *db.Quote) ([]*QuoteConflict, error) {
+	var res []*QuoteConflict
+
+	foundQuoteItems, err := r.db.GetQuoteItems(obj.ID, nil)
+	if err != nil {
+		return res, err
+	}
+
+	for _, qit := range foundQuoteItems {
+		foundLatestPrice, err := r.db.GetLatestInventoryItemPrice(qit.ItemId, nil)
+		if err != nil {
+			return []*QuoteConflict{}, err
+		}
+
+		if foundLatestPrice.ID != qit.ItemPriceId {
+			res = append(res, &QuoteConflict{
+				ItemID: qit.ItemId,
+				Reason: QuoteConflictTypePriceChanged,
+			})
+		}
+	}
+
+	return res, nil
+}

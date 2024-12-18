@@ -3,6 +3,10 @@
 package external_bff
 
 import (
+	"fmt"
+	"io"
+	"strconv"
+
 	"github.com/google/uuid"
 )
 
@@ -30,4 +34,50 @@ type Mutation struct {
 }
 
 type Query struct {
+}
+
+type QuoteConflict struct {
+	ItemID uuid.UUID         `json:"itemId"`
+	Reason QuoteConflictType `json:"reason"`
+}
+
+type QuoteConflictType string
+
+const (
+	QuoteConflictTypePriceChanged   QuoteConflictType = "PRICE_CHANGED"
+	QuoteConflictTypeItemNotInStock QuoteConflictType = "ITEM_NOT_IN_STOCK"
+)
+
+var AllQuoteConflictType = []QuoteConflictType{
+	QuoteConflictTypePriceChanged,
+	QuoteConflictTypeItemNotInStock,
+}
+
+func (e QuoteConflictType) IsValid() bool {
+	switch e {
+	case QuoteConflictTypePriceChanged, QuoteConflictTypeItemNotInStock:
+		return true
+	}
+	return false
+}
+
+func (e QuoteConflictType) String() string {
+	return string(e)
+}
+
+func (e *QuoteConflictType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = QuoteConflictType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid QuoteConflictType", str)
+	}
+	return nil
+}
+
+func (e QuoteConflictType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

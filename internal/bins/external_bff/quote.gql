@@ -1,7 +1,8 @@
 type Quote {
   id: UUID!
   accountId: UUID!
-  PaymentId: UUID!
+  paymentId: UUID!
+  Conflicts: [QuoteConflict!]!
   createdAt: String!
   updatedAt: String!
 }
@@ -26,12 +27,12 @@ input CreateQuoteItemsInput {
   quantity: Int!
 }
 
-# enum QuoteConflictType {
-#   PRICE_CHANGED
-#   ITEM_NOT_IN_STOCK
-# }
+enum QuoteConflictType {
+  PRICE_CHANGED
+  ITEM_NOT_IN_STOCK
+}
 
-# type QuoteConflict {
-#   itemId: UUID!
-#   reason: QuoteConflictType!
-# }
+type QuoteConflict {
+  itemId: UUID!
+  reason: QuoteConflictType!
+}

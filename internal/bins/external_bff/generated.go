@@ -87,10 +87,16 @@ type ComplexityRoot struct {
 
 	Quote struct {
 		AccountId func(childComplexity int) int
+		Conflicts func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
 		PaymentId func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
+	}
+
+	QuoteConflict struct {
+		ItemID func(childComplexity int) int
+		Reason func(childComplexity int) int
 	}
 
 	Tax struct {
@@ -127,6 +133,7 @@ type QueryResolver interface {
 	GetAllTaxes(ctx context.Context) ([]*db.Tax, error)
 }
 type QuoteResolver interface {
+	Conflicts(ctx context.Context, obj *db.Quote) ([]*QuoteConflict, error)
 	CreatedAt(ctx context.Context, obj *db.Quote) (string, error)
 	UpdatedAt(ctx context.Context, obj *db.Quote) (string, error)
 }
@@ -349,6 +356,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Quote.AccountId(childComplexity), true
 
+	case "Quote.Conflicts":
+		if e.complexity.Quote.Conflicts == nil {
+			break
+		}
+
+		return e.complexity.Quote.Conflicts(childComplexity), true
+
 	case "Quote.createdAt":
 		if e.complexity.Quote.CreatedAt == nil {
 			break
@@ -363,7 +377,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Quote.ID(childComplexity), true
 
-	case "Quote.PaymentId":
+	case "Quote.paymentId":
 		if e.complexity.Quote.PaymentId == nil {
 			break
 		}
@@ -376,6 +390,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Quote.UpdatedAt(childComplexity), true
+
+	case "QuoteConflict.itemId":
+		if e.complexity.QuoteConflict.ItemID == nil {
+			break
+		}
+
+		return e.complexity.QuoteConflict.ItemID(childComplexity), true
+
+	case "QuoteConflict.reason":
+		if e.complexity.QuoteConflict.Reason == nil {
+			break
+		}
+
+		return e.complexity.QuoteConflict.Reason(childComplexity), true
 
 	case "Tax.createdAt":
 		if e.complexity.Tax.CreatedAt == nil {
@@ -1414,8 +1442,10 @@ func (ec *executionContext) fieldContext_Mutation_createQuote(ctx context.Contex
 				return ec.fieldContext_Quote_id(ctx, field)
 			case "accountId":
 				return ec.fieldContext_Quote_accountId(ctx, field)
-			case "PaymentId":
-				return ec.fieldContext_Quote_PaymentId(ctx, field)
+			case "paymentId":
+				return ec.fieldContext_Quote_paymentId(ctx, field)
+			case "Conflicts":
+				return ec.fieldContext_Quote_Conflicts(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Quote_createdAt(ctx, field)
 			case "updatedAt":
@@ -1722,8 +1752,10 @@ func (ec *executionContext) fieldContext_Query_getQuote(ctx context.Context, fie
 				return ec.fieldContext_Quote_id(ctx, field)
 			case "accountId":
 				return ec.fieldContext_Quote_accountId(ctx, field)
-			case "PaymentId":
-				return ec.fieldContext_Quote_PaymentId(ctx, field)
+			case "paymentId":
+				return ec.fieldContext_Quote_paymentId(ctx, field)
+			case "Conflicts":
+				return ec.fieldContext_Quote_Conflicts(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Quote_createdAt(ctx, field)
 			case "updatedAt":
@@ -1789,8 +1821,10 @@ func (ec *executionContext) fieldContext_Query_getQuotes(_ context.Context, fiel
 				return ec.fieldContext_Quote_id(ctx, field)
 			case "accountId":
 				return ec.fieldContext_Quote_accountId(ctx, field)
-			case "PaymentId":
-				return ec.fieldContext_Quote_PaymentId(ctx, field)
+			case "paymentId":
+				return ec.fieldContext_Quote_paymentId(ctx, field)
+			case "Conflicts":
+				return ec.fieldContext_Quote_Conflicts(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Quote_createdAt(ctx, field)
 			case "updatedAt":
@@ -2077,8 +2111,8 @@ func (ec *executionContext) fieldContext_Quote_accountId(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Quote_PaymentId(ctx context.Context, field graphql.CollectedField, obj *db.Quote) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Quote_PaymentId(ctx, field)
+func (ec *executionContext) _Quote_paymentId(ctx context.Context, field graphql.CollectedField, obj *db.Quote) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Quote_paymentId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2108,7 +2142,7 @@ func (ec *executionContext) _Quote_PaymentId(ctx context.Context, field graphql.
 	return ec.marshalNUUID2ᚖgithubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Quote_PaymentId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Quote_paymentId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Quote",
 		Field:      field,
@@ -2116,6 +2150,56 @@ func (ec *executionContext) fieldContext_Quote_PaymentId(_ context.Context, fiel
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Quote_Conflicts(ctx context.Context, field graphql.CollectedField, obj *db.Quote) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Quote_Conflicts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Quote().Conflicts(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*QuoteConflict)
+	fc.Result = res
+	return ec.marshalNQuoteConflict2ᚕᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋbinsᚋexternal_bffᚐQuoteConflictᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Quote_Conflicts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Quote",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "itemId":
+				return ec.fieldContext_QuoteConflict_itemId(ctx, field)
+			case "reason":
+				return ec.fieldContext_QuoteConflict_reason(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type QuoteConflict", field.Name)
 		},
 	}
 	return fc, nil
@@ -2204,6 +2288,94 @@ func (ec *executionContext) fieldContext_Quote_updatedAt(_ context.Context, fiel
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QuoteConflict_itemId(ctx context.Context, field graphql.CollectedField, obj *QuoteConflict) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QuoteConflict_itemId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ItemID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QuoteConflict_itemId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QuoteConflict",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _QuoteConflict_reason(ctx context.Context, field graphql.CollectedField, obj *QuoteConflict) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_QuoteConflict_reason(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reason, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(QuoteConflictType)
+	fc.Result = res
+	return ec.marshalNQuoteConflictType2githubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋbinsᚋexternal_bffᚐQuoteConflictType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_QuoteConflict_reason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "QuoteConflict",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type QuoteConflictType does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4888,11 +5060,47 @@ func (ec *executionContext) _Quote(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "PaymentId":
-			out.Values[i] = ec._Quote_PaymentId(ctx, field, obj)
+		case "paymentId":
+			out.Values[i] = ec._Quote_paymentId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "Conflicts":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Quote_Conflicts(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "createdAt":
 			field := field
 
@@ -4965,6 +5173,50 @@ func (ec *executionContext) _Quote(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var quoteConflictImplementors = []string{"QuoteConflict"}
+
+func (ec *executionContext) _QuoteConflict(ctx context.Context, sel ast.SelectionSet, obj *QuoteConflict) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, quoteConflictImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("QuoteConflict")
+		case "itemId":
+			out.Values[i] = ec._QuoteConflict_itemId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "reason":
+			out.Values[i] = ec._QuoteConflict_reason(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5725,6 +5977,70 @@ func (ec *executionContext) marshalNQuote2ᚖgithubᚗcomᚋKrystian19ᚋquote_m
 		return graphql.Null
 	}
 	return ec._Quote(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNQuoteConflict2ᚕᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋbinsᚋexternal_bffᚐQuoteConflictᚄ(ctx context.Context, sel ast.SelectionSet, v []*QuoteConflict) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNQuoteConflict2ᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋbinsᚋexternal_bffᚐQuoteConflict(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNQuoteConflict2ᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋbinsᚋexternal_bffᚐQuoteConflict(ctx context.Context, sel ast.SelectionSet, v *QuoteConflict) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._QuoteConflict(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNQuoteConflictType2githubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋbinsᚋexternal_bffᚐQuoteConflictType(ctx context.Context, v interface{}) (QuoteConflictType, error) {
+	var res QuoteConflictType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNQuoteConflictType2githubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋbinsᚋexternal_bffᚐQuoteConflictType(ctx context.Context, sel ast.SelectionSet, v QuoteConflictType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
