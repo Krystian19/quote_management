@@ -3,6 +3,7 @@ module github.com/Krystian19/quote_management
 require (
 	github.com/99designs/gqlgen v0.17.49
 	github.com/bluele/factory-go v0.0.1
+	github.com/go-chi/chi/v5 v5.2.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redsync/redsync/v4 v4.13.0
 	github.com/google/uuid v1.6.0
@@ -10,6 +11,7 @@ require (
 	github.com/jaswdr/faker/v2 v2.3.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pressly/goose/v3 v3.22.1
+	github.com/rs/cors v1.11.1
 	github.com/samber/lo v1.39.0
 	github.com/stretchr/testify v1.9.0
 	github.com/vektah/gqlparser/v2 v2.5.16
@@ -38,6 +40,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
+	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
@@ -55,6 +58,7 @@ require (
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/mfridman/xflag v0.0.0-20240825232106-efb77353e578 // indirect
 	github.com/microsoft/go-mssqldb v1.7.2 // indirect
+	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/paulmach/orb v0.11.1 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
