@@ -1,8 +1,8 @@
 schema:
-  - "internal/bins/external_bff/*_schema.gql"
+  - "internal/bins/external_bff/*.gql"
 
 operations:
-  - "internal/bins/external_bff/*_test.gql"
+  - "internal/bins/external_bff/*.graphql"
 
 generated: internal/bins/external_bff/generated_test.go
 package: external_bff_test

@@ -66,31 +66,11 @@ func (v *__CreateTaxInput) GetInput() CreateTaxInput { return v.Input }
 
 // getAllTaxesGetAllTaxesTax includes the requested fields of the GraphQL type Tax.
 type getAllTaxesGetAllTaxesTax struct {
-	Id          uuid.UUID `json:"id"`
-	Name        string    `json:"name"`
-	TaxRate     float64   `json:"taxRate"`
-	EffectiveAt string    `json:"effectiveAt"`
-	CreatedAt   string    `json:"createdAt"`
-	UpdatedAt   string    `json:"updatedAt"`
+	Id uuid.UUID `json:"id"`
 }
 
 // GetId returns getAllTaxesGetAllTaxesTax.Id, and is useful for accessing the field via an interface.
 func (v *getAllTaxesGetAllTaxesTax) GetId() uuid.UUID { return v.Id }
-
-// GetName returns getAllTaxesGetAllTaxesTax.Name, and is useful for accessing the field via an interface.
-func (v *getAllTaxesGetAllTaxesTax) GetName() string { return v.Name }
-
-// GetTaxRate returns getAllTaxesGetAllTaxesTax.TaxRate, and is useful for accessing the field via an interface.
-func (v *getAllTaxesGetAllTaxesTax) GetTaxRate() float64 { return v.TaxRate }
-
-// GetEffectiveAt returns getAllTaxesGetAllTaxesTax.EffectiveAt, and is useful for accessing the field via an interface.
-func (v *getAllTaxesGetAllTaxesTax) GetEffectiveAt() string { return v.EffectiveAt }
-
-// GetCreatedAt returns getAllTaxesGetAllTaxesTax.CreatedAt, and is useful for accessing the field via an interface.
-func (v *getAllTaxesGetAllTaxesTax) GetCreatedAt() string { return v.CreatedAt }
-
-// GetUpdatedAt returns getAllTaxesGetAllTaxesTax.UpdatedAt, and is useful for accessing the field via an interface.
-func (v *getAllTaxesGetAllTaxesTax) GetUpdatedAt() string { return v.UpdatedAt }
 
 // getAllTaxesResponse is returned by getAllTaxes on success.
 type getAllTaxesResponse struct {
@@ -145,11 +125,6 @@ const getAllTaxes_Operation = `
 query getAllTaxes {
 	getAllTaxes {
 		id
-		name
-		taxRate
-		effectiveAt
-		createdAt
-		updatedAt
 	}
 }
 `

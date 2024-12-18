@@ -1,5 +1,5 @@
 schema:
-  - "internal/bins/external_bff/**/*_schema.gql"
+  - "internal/bins/external_bff/**/*.gql"
 
 exec:
   filename: internal/bins/external_bff/generated.go
