@@ -9,6 +9,43 @@ import (
 	"github.com/google/uuid"
 )
 
+// CreateInventoryItemCreateInventoryItem includes the requested fields of the GraphQL type InventoryItem.
+type CreateInventoryItemCreateInventoryItem struct {
+	Id uuid.UUID `json:"id"`
+}
+
+// GetId returns CreateInventoryItemCreateInventoryItem.Id, and is useful for accessing the field via an interface.
+func (v *CreateInventoryItemCreateInventoryItem) GetId() uuid.UUID { return v.Id }
+
+type CreateInventoryItemInput struct {
+	Name              string  `json:"name"`
+	IntroductionPrice float64 `json:"introductionPrice"`
+}
+
+// GetName returns CreateInventoryItemInput.Name, and is useful for accessing the field via an interface.
+func (v *CreateInventoryItemInput) GetName() string { return v.Name }
+
+// GetIntroductionPrice returns CreateInventoryItemInput.IntroductionPrice, and is useful for accessing the field via an interface.
+func (v *CreateInventoryItemInput) GetIntroductionPrice() float64 { return v.IntroductionPrice }
+
+// CreateInventoryItemResponse is returned by CreateInventoryItem on success.
+type CreateInventoryItemResponse struct {
+	CreateInventoryItem CreateInventoryItemCreateInventoryItem `json:"createInventoryItem"`
+}
+
+// GetCreateInventoryItem returns CreateInventoryItemResponse.CreateInventoryItem, and is useful for accessing the field via an interface.
+func (v *CreateInventoryItemResponse) GetCreateInventoryItem() CreateInventoryItemCreateInventoryItem {
+	return v.CreateInventoryItem
+}
+
+// CreateInventoryItemsResponse is returned by CreateInventoryItems on success.
+type CreateInventoryItemsResponse struct {
+	CreateInventoryItems bool `json:"createInventoryItems"`
+}
+
+// GetCreateInventoryItems returns CreateInventoryItemsResponse.CreateInventoryItems, and is useful for accessing the field via an interface.
+func (v *CreateInventoryItemsResponse) GetCreateInventoryItems() bool { return v.CreateInventoryItems }
+
 // CreateTaxCreateTax includes the requested fields of the GraphQL type Tax.
 type CreateTaxCreateTax struct {
 	Id          uuid.UUID `json:"id"`
@@ -56,6 +93,100 @@ type CreateTaxResponse struct {
 // GetCreateTax returns CreateTaxResponse.CreateTax, and is useful for accessing the field via an interface.
 func (v *CreateTaxResponse) GetCreateTax() CreateTaxCreateTax { return v.CreateTax }
 
+// GetAllInventoryItemsGetAllInventoryItemsInventoryItem includes the requested fields of the GraphQL type InventoryItem.
+type GetAllInventoryItemsGetAllInventoryItemsInventoryItem struct {
+	Id   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+}
+
+// GetId returns GetAllInventoryItemsGetAllInventoryItemsInventoryItem.Id, and is useful for accessing the field via an interface.
+func (v *GetAllInventoryItemsGetAllInventoryItemsInventoryItem) GetId() uuid.UUID { return v.Id }
+
+// GetName returns GetAllInventoryItemsGetAllInventoryItemsInventoryItem.Name, and is useful for accessing the field via an interface.
+func (v *GetAllInventoryItemsGetAllInventoryItemsInventoryItem) GetName() string { return v.Name }
+
+// GetAllInventoryItemsResponse is returned by GetAllInventoryItems on success.
+type GetAllInventoryItemsResponse struct {
+	GetAllInventoryItems []GetAllInventoryItemsGetAllInventoryItemsInventoryItem `json:"getAllInventoryItems"`
+}
+
+// GetGetAllInventoryItems returns GetAllInventoryItemsResponse.GetAllInventoryItems, and is useful for accessing the field via an interface.
+func (v *GetAllInventoryItemsResponse) GetGetAllInventoryItems() []GetAllInventoryItemsGetAllInventoryItemsInventoryItem {
+	return v.GetAllInventoryItems
+}
+
+// GetInventoryItemGetInventoryItem includes the requested fields of the GraphQL type InventoryItem.
+type GetInventoryItemGetInventoryItem struct {
+	Id           uuid.UUID                                                      `json:"id"`
+	Name         string                                                         `json:"name"`
+	CurrentPrice GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice `json:"currentPrice"`
+}
+
+// GetId returns GetInventoryItemGetInventoryItem.Id, and is useful for accessing the field via an interface.
+func (v *GetInventoryItemGetInventoryItem) GetId() uuid.UUID { return v.Id }
+
+// GetName returns GetInventoryItemGetInventoryItem.Name, and is useful for accessing the field via an interface.
+func (v *GetInventoryItemGetInventoryItem) GetName() string { return v.Name }
+
+// GetCurrentPrice returns GetInventoryItemGetInventoryItem.CurrentPrice, and is useful for accessing the field via an interface.
+func (v *GetInventoryItemGetInventoryItem) GetCurrentPrice() GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice {
+	return v.CurrentPrice
+}
+
+// GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice includes the requested fields of the GraphQL type InventoryItemPrice.
+type GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice struct {
+	Id              uuid.UUID `json:"id"`
+	InventoryItemId uuid.UUID `json:"inventoryItemId"`
+	Price           float64   `json:"price"`
+	Version         int       `json:"version"`
+}
+
+// GetId returns GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice.Id, and is useful for accessing the field via an interface.
+func (v *GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice) GetId() uuid.UUID {
+	return v.Id
+}
+
+// GetInventoryItemId returns GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice.InventoryItemId, and is useful for accessing the field via an interface.
+func (v *GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice) GetInventoryItemId() uuid.UUID {
+	return v.InventoryItemId
+}
+
+// GetPrice returns GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice.Price, and is useful for accessing the field via an interface.
+func (v *GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice) GetPrice() float64 {
+	return v.Price
+}
+
+// GetVersion returns GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice.Version, and is useful for accessing the field via an interface.
+func (v *GetInventoryItemGetInventoryItemCurrentPriceInventoryItemPrice) GetVersion() int {
+	return v.Version
+}
+
+// GetInventoryItemResponse is returned by GetInventoryItem on success.
+type GetInventoryItemResponse struct {
+	GetInventoryItem GetInventoryItemGetInventoryItem `json:"getInventoryItem"`
+}
+
+// GetGetInventoryItem returns GetInventoryItemResponse.GetInventoryItem, and is useful for accessing the field via an interface.
+func (v *GetInventoryItemResponse) GetGetInventoryItem() GetInventoryItemGetInventoryItem {
+	return v.GetInventoryItem
+}
+
+// __CreateInventoryItemInput is used internally by genqlient
+type __CreateInventoryItemInput struct {
+	Input CreateInventoryItemInput `json:"input"`
+}
+
+// GetInput returns __CreateInventoryItemInput.Input, and is useful for accessing the field via an interface.
+func (v *__CreateInventoryItemInput) GetInput() CreateInventoryItemInput { return v.Input }
+
+// __CreateInventoryItemsInput is used internally by genqlient
+type __CreateInventoryItemsInput struct {
+	Input []CreateInventoryItemInput `json:"input"`
+}
+
+// GetInput returns __CreateInventoryItemsInput.Input, and is useful for accessing the field via an interface.
+func (v *__CreateInventoryItemsInput) GetInput() []CreateInventoryItemInput { return v.Input }
+
 // __CreateTaxInput is used internally by genqlient
 type __CreateTaxInput struct {
 	Input CreateTaxInput `json:"input"`
@@ -63,6 +194,14 @@ type __CreateTaxInput struct {
 
 // GetInput returns __CreateTaxInput.Input, and is useful for accessing the field via an interface.
 func (v *__CreateTaxInput) GetInput() CreateTaxInput { return v.Input }
+
+// __GetInventoryItemInput is used internally by genqlient
+type __GetInventoryItemInput struct {
+	Id uuid.UUID `json:"id"`
+}
+
+// GetId returns __GetInventoryItemInput.Id, and is useful for accessing the field via an interface.
+func (v *__GetInventoryItemInput) GetId() uuid.UUID { return v.Id }
 
 // getAllTaxesGetAllTaxesTax includes the requested fields of the GraphQL type Tax.
 type getAllTaxesGetAllTaxesTax struct {
@@ -79,6 +218,74 @@ type getAllTaxesResponse struct {
 
 // GetGetAllTaxes returns getAllTaxesResponse.GetAllTaxes, and is useful for accessing the field via an interface.
 func (v *getAllTaxesResponse) GetGetAllTaxes() []getAllTaxesGetAllTaxesTax { return v.GetAllTaxes }
+
+// The query or mutation executed by CreateInventoryItem.
+const CreateInventoryItem_Operation = `
+mutation CreateInventoryItem ($input: CreateInventoryItemInput!) {
+	createInventoryItem(fields: $input) {
+		id
+	}
+}
+`
+
+func CreateInventoryItem(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input CreateInventoryItemInput,
+) (*CreateInventoryItemResponse, error) {
+	req_ := &graphql.Request{
+		OpName: "CreateInventoryItem",
+		Query:  CreateInventoryItem_Operation,
+		Variables: &__CreateInventoryItemInput{
+			Input: input,
+		},
+	}
+	var err_ error
+
+	var data_ CreateInventoryItemResponse
+	resp_ := &graphql.Response{Data: &data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return &data_, err_
+}
+
+// The query or mutation executed by CreateInventoryItems.
+const CreateInventoryItems_Operation = `
+mutation CreateInventoryItems ($input: [CreateInventoryItemInput!]!) {
+	createInventoryItems(fields: $input)
+}
+`
+
+func CreateInventoryItems(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input []CreateInventoryItemInput,
+) (*CreateInventoryItemsResponse, error) {
+	req_ := &graphql.Request{
+		OpName: "CreateInventoryItems",
+		Query:  CreateInventoryItems_Operation,
+		Variables: &__CreateInventoryItemsInput{
+			Input: input,
+		},
+	}
+	var err_ error
+
+	var data_ CreateInventoryItemsResponse
+	resp_ := &graphql.Response{Data: &data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return &data_, err_
+}
 
 // The query or mutation executed by CreateTax.
 const CreateTax_Operation = `
@@ -109,6 +316,80 @@ func CreateTax(
 	var err_ error
 
 	var data_ CreateTaxResponse
+	resp_ := &graphql.Response{Data: &data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return &data_, err_
+}
+
+// The query or mutation executed by GetAllInventoryItems.
+const GetAllInventoryItems_Operation = `
+query GetAllInventoryItems {
+	getAllInventoryItems {
+		id
+		name
+	}
+}
+`
+
+func GetAllInventoryItems(
+	ctx_ context.Context,
+	client_ graphql.Client,
+) (*GetAllInventoryItemsResponse, error) {
+	req_ := &graphql.Request{
+		OpName: "GetAllInventoryItems",
+		Query:  GetAllInventoryItems_Operation,
+	}
+	var err_ error
+
+	var data_ GetAllInventoryItemsResponse
+	resp_ := &graphql.Response{Data: &data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return &data_, err_
+}
+
+// The query or mutation executed by GetInventoryItem.
+const GetInventoryItem_Operation = `
+query GetInventoryItem ($id: UUID!) {
+	getInventoryItem(id: $id) {
+		id
+		name
+		currentPrice {
+			id
+			inventoryItemId
+			price
+			version
+		}
+	}
+}
+`
+
+func GetInventoryItem(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	id uuid.UUID,
+) (*GetInventoryItemResponse, error) {
+	req_ := &graphql.Request{
+		OpName: "GetInventoryItem",
+		Query:  GetInventoryItem_Operation,
+		Variables: &__GetInventoryItemInput{
+			Id: id,
+		},
+	}
+	var err_ error
+
+	var data_ GetInventoryItemResponse
 	resp_ := &graphql.Response{Data: &data_}
 
 	err_ = client_.MakeRequest(

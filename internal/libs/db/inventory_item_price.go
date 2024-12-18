@@ -13,7 +13,7 @@ type InventoryItemPrice struct {
 	ID              uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
 	InventoryItemId uuid.UUID
 	Price           float64
-	Version         uint
+	Version         int
 	CreatedAt       time.Time
 }
 
@@ -31,7 +31,7 @@ var InventoryItemPriceFactory = factory.NewFactory(
 		return float64(1.0), nil
 	}).
 	Attr("Version", func(args factory.Args) (interface{}, error) {
-		return uint(1), nil
+		return int(1), nil
 	})
 
 func (d *DB) CreateInventoryItemPrice(newItemPrice InventoryItemPrice, txn *Txn) (*InventoryItemPrice, error) {

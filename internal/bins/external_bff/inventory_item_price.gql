@@ -1,0 +1,7 @@
+type InventoryItemPrice {
+  id: UUID!
+  inventoryItemId: UUID!
+  price: Float!
+  version: Int!
+  createdAt: String!
+}

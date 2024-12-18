@@ -2,6 +2,11 @@
 
 package external_bff
 
+type CreateInventoryItemInput struct {
+	Name              string  `json:"name"`
+	IntroductionPrice float64 `json:"introductionPrice"`
+}
+
 type CreateTaxInput struct {
 	Name    string  `json:"name"`
 	TaxRate float64 `json:"taxRate"`

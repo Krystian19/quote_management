@@ -1,0 +1,29 @@
+query GetInventoryItem($id: UUID!) {
+  getInventoryItem(id: $id) {
+    id
+    name
+    currentPrice {
+      id
+      inventoryItemId
+      price
+      version
+    }
+  }
+}
+
+query GetAllInventoryItems {
+  getAllInventoryItems {
+    id
+    name
+  }
+}
+
+mutation CreateInventoryItem($input: CreateInventoryItemInput!) {
+  createInventoryItem(fields: $input) {
+    id
+  }
+}
+
+mutation CreateInventoryItems($input: [CreateInventoryItemInput!]!) {
+  createInventoryItems(fields: $input)
+}

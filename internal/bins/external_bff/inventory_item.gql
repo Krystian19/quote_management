@@ -1,0 +1,23 @@
+type InventoryItem {
+  id: UUID!
+  name: String!
+  currentPrice: InventoryItemPrice!
+  createdAt: String!
+  updatedAt: String!
+}
+
+extend type Query {
+  getAllInventoryItems: [InventoryItem!]!
+  getInventoryItem(id: UUID!): InventoryItem
+}
+
+input CreateInventoryItemInput {
+  name: String!
+  introductionPrice: Float!
+}
+
+extend type Mutation {
+  createInventoryItem(fields: CreateInventoryItemInput!): InventoryItem!
+  createInventoryItems(fields: [CreateInventoryItemInput!]!): Boolean!
+  # updateInventoryItemPrice(id: UUID!, price: Float!): InventoryItem
+}
