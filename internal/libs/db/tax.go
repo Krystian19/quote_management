@@ -58,8 +58,8 @@ func (d *DB) GetTax(id uuid.UUID, txn *Txn) (*Tax, error) {
 	return res, nil
 }
 
-func (d *DB) CreateTaxes(newTax []*Tax, txn *Txn) error {
-	return d.getQuery(txn).Create(newTax).Error
+func (d *DB) CreateTaxes(newTaxes []*Tax, txn *Txn) error {
+	return d.getQuery(txn).Create(newTaxes).Error
 }
 
 func (d *DB) GetAllTaxes(txn *Txn) ([]*Tax, error) {

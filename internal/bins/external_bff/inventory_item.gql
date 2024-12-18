@@ -1,3 +1,4 @@
+# Basic unit of inventory on our system (e.g: Phone, TV, Coach)
 type InventoryItem {
   id: UUID!
   name: String!
@@ -11,13 +12,13 @@ extend type Query {
   getInventoryItem(id: UUID!): InventoryItem
 }
 
-input CreateInventoryItemInput {
-  name: String!
-  introductionPrice: Float!
-}
-
 extend type Mutation {
   createInventoryItem(fields: CreateInventoryItemInput!): InventoryItem!
   createInventoryItems(fields: [CreateInventoryItemInput!]!): Boolean!
   updateInventoryItemPrice(id: UUID!, price: Float!): InventoryItem
+}
+
+input CreateInventoryItemInput {
+  name: String!
+  introductionPrice: Float!
 }

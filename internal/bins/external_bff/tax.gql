@@ -11,12 +11,12 @@ extend type Query {
   getAllTaxes: [Tax!]!
 }
 
-input CreateTaxInput {
-  name: String!
-  taxRate: Float!
-}
-
 extend type Mutation {
   createTax(fields: CreateTaxInput!): Tax!
   createTaxes(fields: [CreateTaxInput!]!): Boolean!
+}
+
+input CreateTaxInput {
+  name: String!
+  taxRate: Float!
 }

@@ -8,4 +8,30 @@ type Quote {
 
 extend type Query {
   getQuote(id: UUID!): Quote
+  getQuotes: [Quote!]!
 }
+
+extend type Mutation {
+  createQuote(fields: CreateQuoteInput!): Quote!
+  # confirmQuote(id: UUID!, paymentId: UUID!): [QuoteConflict!]!
+}
+
+input CreateQuoteInput {
+  accountId: UUID!
+  items: [CreateQuoteItemsInput!]!
+}
+
+input CreateQuoteItemsInput {
+  itemId: UUID!
+  quantity: Int!
+}
+
+# enum QuoteConflictType {
+#   PRICE_CHANGED
+#   ITEM_NOT_IN_STOCK
+# }
+
+# type QuoteConflict {
+#   itemId: UUID!
+#   reason: QuoteConflictType!
+# }

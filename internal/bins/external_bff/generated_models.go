@@ -2,9 +2,23 @@
 
 package external_bff
 
+import (
+	"github.com/google/uuid"
+)
+
 type CreateInventoryItemInput struct {
 	Name              string  `json:"name"`
 	IntroductionPrice float64 `json:"introductionPrice"`
+}
+
+type CreateQuoteInput struct {
+	AccountID uuid.UUID                `json:"accountId"`
+	Items     []*CreateQuoteItemsInput `json:"items"`
+}
+
+type CreateQuoteItemsInput struct {
+	ItemID   uuid.UUID `json:"itemId"`
+	Quantity int       `json:"quantity"`
 }
 
 type CreateTaxInput struct {
