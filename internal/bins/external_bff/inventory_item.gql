@@ -19,5 +19,5 @@ input CreateInventoryItemInput {
 extend type Mutation {
   createInventoryItem(fields: CreateInventoryItemInput!): InventoryItem!
   createInventoryItems(fields: [CreateInventoryItemInput!]!): Boolean!
-  # updateInventoryItemPrice(id: UUID!, price: Float!): InventoryItem
+  updateInventoryItemPrice(id: UUID!, price: Float!): InventoryItem
 }

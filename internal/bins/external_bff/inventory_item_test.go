@@ -163,3 +163,53 @@ func TestCreateInventoryItemsTest(t *testing.T) {
 		}),
 	)
 }
+
+func TestUpdateInventoryItemPrice(t *testing.T) {
+	demoPort := utils.GetRandOpenPort()
+
+	srv, err := getBffInstance(
+		demoPort,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	go func() {
+		if err := srv.Run(); err != nil {
+			t.Fatal(err)
+		}
+	}()
+
+	test_db, err := getDB()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dummyInventoryItem := db.InventoryItemFactory.MustCreate().(db.InventoryItem)
+	dummyInventoryItemPrice := db.InventoryItemPriceFactory.MustCreate().(db.InventoryItemPrice)
+
+	createdItemRes, err := CreateInventoryItem(context.Background(), getGqlClient(demoPort), CreateInventoryItemInput{
+		Name:              dummyInventoryItem.Name,
+		IntroductionPrice: dummyInventoryItemPrice.Price,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	createdItem := createdItemRes.CreateInventoryItem
+	newPrice := 19.2
+
+	_, err = UpdateInventoryItemPrice(context.Background(), getGqlClient(demoPort), createdItem.Id, newPrice)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	foundPrice, err := test_db.GetLatestInventoryItemPrice(createdItem.Id, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	require.NotNil(t, foundPrice)
+	require.Equal(t, foundPrice.Price, newPrice)
+	require.Equal(t, foundPrice.Version, 2)
+}

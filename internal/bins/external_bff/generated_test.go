@@ -171,6 +171,26 @@ func (v *GetInventoryItemResponse) GetGetInventoryItem() GetInventoryItemGetInve
 	return v.GetInventoryItem
 }
 
+// UpdateInventoryItemPriceResponse is returned by UpdateInventoryItemPrice on success.
+type UpdateInventoryItemPriceResponse struct {
+	UpdateInventoryItemPrice UpdateInventoryItemPriceUpdateInventoryItemPriceInventoryItem `json:"updateInventoryItemPrice"`
+}
+
+// GetUpdateInventoryItemPrice returns UpdateInventoryItemPriceResponse.UpdateInventoryItemPrice, and is useful for accessing the field via an interface.
+func (v *UpdateInventoryItemPriceResponse) GetUpdateInventoryItemPrice() UpdateInventoryItemPriceUpdateInventoryItemPriceInventoryItem {
+	return v.UpdateInventoryItemPrice
+}
+
+// UpdateInventoryItemPriceUpdateInventoryItemPriceInventoryItem includes the requested fields of the GraphQL type InventoryItem.
+type UpdateInventoryItemPriceUpdateInventoryItemPriceInventoryItem struct {
+	Id uuid.UUID `json:"id"`
+}
+
+// GetId returns UpdateInventoryItemPriceUpdateInventoryItemPriceInventoryItem.Id, and is useful for accessing the field via an interface.
+func (v *UpdateInventoryItemPriceUpdateInventoryItemPriceInventoryItem) GetId() uuid.UUID {
+	return v.Id
+}
+
 // __CreateInventoryItemInput is used internally by genqlient
 type __CreateInventoryItemInput struct {
 	Input CreateInventoryItemInput `json:"input"`
@@ -202,6 +222,18 @@ type __GetInventoryItemInput struct {
 
 // GetId returns __GetInventoryItemInput.Id, and is useful for accessing the field via an interface.
 func (v *__GetInventoryItemInput) GetId() uuid.UUID { return v.Id }
+
+// __UpdateInventoryItemPriceInput is used internally by genqlient
+type __UpdateInventoryItemPriceInput struct {
+	Id    uuid.UUID `json:"id"`
+	Price float64   `json:"price"`
+}
+
+// GetId returns __UpdateInventoryItemPriceInput.Id, and is useful for accessing the field via an interface.
+func (v *__UpdateInventoryItemPriceInput) GetId() uuid.UUID { return v.Id }
+
+// GetPrice returns __UpdateInventoryItemPriceInput.Price, and is useful for accessing the field via an interface.
+func (v *__UpdateInventoryItemPriceInput) GetPrice() float64 { return v.Price }
 
 // getAllTaxesGetAllTaxesTax includes the requested fields of the GraphQL type Tax.
 type getAllTaxesGetAllTaxesTax struct {
@@ -390,6 +422,43 @@ func GetInventoryItem(
 	var err_ error
 
 	var data_ GetInventoryItemResponse
+	resp_ := &graphql.Response{Data: &data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return &data_, err_
+}
+
+// The query or mutation executed by UpdateInventoryItemPrice.
+const UpdateInventoryItemPrice_Operation = `
+mutation UpdateInventoryItemPrice ($id: UUID!, $price: Float!) {
+	updateInventoryItemPrice(id: $id, price: $price) {
+		id
+	}
+}
+`
+
+func UpdateInventoryItemPrice(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	id uuid.UUID,
+	price float64,
+) (*UpdateInventoryItemPriceResponse, error) {
+	req_ := &graphql.Request{
+		OpName: "UpdateInventoryItemPrice",
+		Query:  UpdateInventoryItemPrice_Operation,
+		Variables: &__UpdateInventoryItemPriceInput{
+			Id:    id,
+			Price: price,
+		},
+	}
+	var err_ error
+
+	var data_ UpdateInventoryItemPriceResponse
 	resp_ := &graphql.Response{Data: &data_}
 
 	err_ = client_.MakeRequest(

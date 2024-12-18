@@ -69,10 +69,11 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateInventoryItem  func(childComplexity int, fields CreateInventoryItemInput) int
-		CreateInventoryItems func(childComplexity int, fields []*CreateInventoryItemInput) int
-		CreateTax            func(childComplexity int, fields CreateTaxInput) int
-		CreateTaxes          func(childComplexity int, fields []*CreateTaxInput) int
+		CreateInventoryItem      func(childComplexity int, fields CreateInventoryItemInput) int
+		CreateInventoryItems     func(childComplexity int, fields []*CreateInventoryItemInput) int
+		CreateTax                func(childComplexity int, fields CreateTaxInput) int
+		CreateTaxes              func(childComplexity int, fields []*CreateTaxInput) int
+		UpdateInventoryItemPrice func(childComplexity int, id uuid.UUID, price float64) int
 	}
 
 	Query struct {
@@ -111,6 +112,7 @@ type InventoryItemPriceResolver interface {
 type MutationResolver interface {
 	CreateInventoryItem(ctx context.Context, fields CreateInventoryItemInput) (*db.InventoryItem, error)
 	CreateInventoryItems(ctx context.Context, fields []*CreateInventoryItemInput) (bool, error)
+	UpdateInventoryItemPrice(ctx context.Context, id uuid.UUID, price float64) (*db.InventoryItem, error)
 	CreateTax(ctx context.Context, fields CreateTaxInput) (*db.Tax, error)
 	CreateTaxes(ctx context.Context, fields []*CreateTaxInput) (bool, error)
 }
@@ -266,6 +268,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateTaxes(childComplexity, args["fields"].([]*CreateTaxInput)), true
+
+	case "Mutation.updateInventoryItemPrice":
+		if e.complexity.Mutation.UpdateInventoryItemPrice == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateInventoryItemPrice_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateInventoryItemPrice(childComplexity, args["id"].(uuid.UUID), args["price"].(float64)), true
 
 	case "Query.getAllInventoryItems":
 		if e.complexity.Query.GetAllInventoryItems == nil {
@@ -569,6 +583,30 @@ func (ec *executionContext) field_Mutation_createTaxes_args(ctx context.Context,
 		}
 	}
 	args["fields"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateInventoryItemPrice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 uuid.UUID
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 float64
+	if tmp, ok := rawArgs["price"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("price"))
+		arg1, err = ec.unmarshalNFloat2float64(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["price"] = arg1
 	return args, nil
 }
 
@@ -1223,6 +1261,70 @@ func (ec *executionContext) fieldContext_Mutation_createInventoryItems(ctx conte
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createInventoryItems_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateInventoryItemPrice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateInventoryItemPrice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateInventoryItemPrice(rctx, fc.Args["id"].(uuid.UUID), fc.Args["price"].(float64))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*db.InventoryItem)
+	fc.Result = res
+	return ec.marshalOInventoryItem2ᚖgithubᚗcomᚋKrystian19ᚋquote_managementᚋinternalᚋlibsᚋdbᚐInventoryItem(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateInventoryItemPrice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_InventoryItem_id(ctx, field)
+			case "name":
+				return ec.fieldContext_InventoryItem_name(ctx, field)
+			case "currentPrice":
+				return ec.fieldContext_InventoryItem_currentPrice(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_InventoryItem_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_InventoryItem_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type InventoryItem", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateInventoryItemPrice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -4332,6 +4434,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "updateInventoryItemPrice":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateInventoryItemPrice(ctx, field)
+			})
 		case "createTax":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createTax(ctx, field)

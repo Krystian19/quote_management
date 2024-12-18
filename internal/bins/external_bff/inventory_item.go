@@ -61,6 +61,29 @@ func (r mutationResolver) CreateInventoryItems(ctx context.Context, fields []*Cr
 	return true, err
 }
 
+func (r mutationResolver) UpdateInventoryItemPrice(ctx context.Context, id uuid.UUID, price float64) (*db.InventoryItem, error) {
+	foundItem, err := r.db.GetInventoryItem(id, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	foundLatestPrice, err := r.db.GetLatestInventoryItemPrice(foundItem.ID, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = r.db.CreateInventoryItemPrice(db.InventoryItemPrice{
+		InventoryItemId: foundItem.ID,
+		Price:           price,
+		Version:         foundLatestPrice.Version + 1,
+	}, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return foundItem, nil
+}
+
 func (r queryResolver) GetInventoryItem(ctx context.Context, id uuid.UUID) (*db.InventoryItem, error) {
 	return r.db.GetInventoryItem(id, nil)
 }
