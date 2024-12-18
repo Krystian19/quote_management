@@ -1,0 +1,10 @@
+query getAllTaxes {
+  getAllTaxes {
+    id
+    name
+    taxRate
+    effectiveAt
+    createdAt
+    updatedAt
+  }
+}

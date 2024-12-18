@@ -9,6 +9,7 @@ test-no-cache:
 
 gqlgen:
 	(go run github.com/99designs/gqlgen@v0.17.49)
+	(go run github.com/Khan/genqlient@v0.7.0)
 
 external-bff-build:
 	go build \

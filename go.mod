@@ -2,6 +2,7 @@ module github.com/Krystian19/quote_management
 
 require (
 	github.com/99designs/gqlgen v0.17.49
+	github.com/Khan/genqlient v0.7.0
 	github.com/bluele/factory-go v0.0.1
 	github.com/enescakir/emoji v1.0.0
 	github.com/go-chi/chi/v5 v5.2.0

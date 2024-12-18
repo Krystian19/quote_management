@@ -1,0 +1,12 @@
+schema:
+  - "internal/bins/external_bff/*_schema.gql"
+
+operations:
+  - "internal/bins/external_bff/*_test.gql"
+
+generated: internal/bins/external_bff/generated_test.go
+package: external_bff_test
+
+bindings:
+  UUID:
+    type: github.com/google/uuid.UUID
