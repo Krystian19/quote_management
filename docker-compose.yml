@@ -96,6 +96,21 @@ services:
       quote.postgres:
         condition: service_healthy
 
+  quote.internal.api:
+    container_name: quote_internal_api 
+    networks:
+      - canary_net
+    build:
+      context: .
+      dockerfile: ./docker/internal-bff/Dockerfile
+    profiles:
+      - app 
+    ports:
+      - "9040:9040"
+    depends_on:
+      quote.postgres:
+        condition: service_healthy
+
 networks:
   canary_net:
     name: canary_net
