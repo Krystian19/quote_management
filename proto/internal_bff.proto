@@ -1,0 +1,15 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "github.com/dinerio/aurora-btc/proto";
+
+import "google/protobuf/empty.proto";
+
+service InternalBffAPI {
+  rpc BulkCreateInventoryItems(stream NewInventoryItem) returns (google.protobuf.Empty);
+}
+
+message NewInventoryItem {
+  string name = 1;
+  float introduction_price = 2;
+}

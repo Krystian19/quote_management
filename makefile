@@ -11,6 +11,14 @@ gqlgen:
 	(go run github.com/99designs/gqlgen@v0.17.49)
 	(go run github.com/Khan/genqlient@v0.7.0)
 
+proto-gen:
+	protoc  \
+	--go_out=. \
+	--go-grpc_opt=require_unimplemented_servers=false \
+	--go_opt=paths=source_relative \
+	--go-grpc_out=. \
+	--go-grpc_opt=paths=source_relative ./proto/*.proto \
+
 external-bff-build:
 	go build \
 		-ldflags "-s -w" \
