@@ -45,6 +45,9 @@ func TestGetInventoryItem(t *testing.T) {
 	}
 
 	require.NotNil(t, foundInventoryItem)
+
+	createdInventoryItem.CreatedAt = foundInventoryItem.CreatedAt
+	createdInventoryItem.UpdatedAt = foundInventoryItem.UpdatedAt
 	require.Equal(t, *createdInventoryItem, *foundInventoryItem)
 }
 

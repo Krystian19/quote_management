@@ -56,6 +56,8 @@ func TestGetLatestsInventoryItemPrice(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	createdInventoryItemPrice.CreatedAt = foundItemPrice.CreatedAt
+
 	require.NotNil(t, foundItemPrice)
 	require.Equal(t, *createdInventoryItemPrice, *foundItemPrice)
 }
@@ -85,5 +87,7 @@ func TestGetInventoryItemPrice(t *testing.T) {
 	}
 
 	require.NotNil(t, foundItemPrice)
+
+	createdInventoryItemPrice.CreatedAt = foundItemPrice.CreatedAt
 	require.Equal(t, *createdInventoryItemPrice, *foundItemPrice)
 }

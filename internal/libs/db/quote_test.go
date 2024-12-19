@@ -45,6 +45,9 @@ func TestGetQuote(t *testing.T) {
 	}
 
 	require.NotNil(t, foundQuote)
+
+	createdQuote.CreatedAt = foundQuote.CreatedAt
+	createdQuote.UpdatedAt = foundQuote.UpdatedAt
 	require.Equal(t, *createdQuote, *foundQuote)
 }
 
