@@ -13,5 +13,5 @@ func (r resolver) QuoteTax() QuoteTaxResolver {
 }
 
 func (r quoteTaxResolver) Tax(ctx context.Context, obj *db.QuoteTax) (*db.Tax, error) {
-	return r.db.GetTax(obj.ID, nil)
+	return r.db.GetTax(obj.TaxId, nil)
 }
