@@ -14,6 +14,7 @@ type Env struct {
 	DB_TEST_URL string
 
 	EXTERNAL_BFF_PORT string
+	INTERNAL_BFF_PORT int
 }
 
 func getEnv(key, fallback string) string {
@@ -56,5 +57,6 @@ func GetEnv() Env {
 		DB_TEST_URL: getEnv("DB_TEST_URL", "host=quote.postgres port=5432 user=postgres password=pass dbname=quote_test sslmode=disable"),
 
 		EXTERNAL_BFF_PORT: getEnv("EXTERNAL_BFF_PORT", "4000"),
+		INTERNAL_BFF_PORT: getIntEnv("INTERNAL_BFF_PORT", 9040),
 	}
 }

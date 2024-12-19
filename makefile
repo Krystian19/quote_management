@@ -1,5 +1,6 @@
 build: \
 	external-bff-build \
+	internal-bff-build \
 
 test:
 	go test ./internal/... -timeout 20s
@@ -25,3 +26,10 @@ external-bff-build:
 		-gcflags "all=-trimpath=${PWD}" \
 		-tags netgo \
 		-o build/external-bff-app ./cmd/external-bff/*.go
+
+internal-bff-build:
+	go build \
+		-ldflags "-s -w" \
+		-gcflags "all=-trimpath=${PWD}" \
+		-tags netgo \
+		-o build/internal-bff-app ./cmd/internal-bff/*.go
