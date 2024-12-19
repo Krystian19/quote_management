@@ -25,13 +25,13 @@ func getDB() (*db.DB, error) {
 func getBffInstance(
 	port string,
 ) (*external_bff.Server, error) {
-	test_db, err := getDB()
+	db, err := getDB()
 	if err != nil {
 		return nil, err
 	}
 
 	return utils.GetPtr(external_bff.New(external_bff.Opts{
 		Port: port,
-		DB:   test_db,
+		DB:   db,
 	})), nil
 }
