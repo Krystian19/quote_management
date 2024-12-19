@@ -8,10 +8,17 @@ import (
 	"github.com/Krystian19/quote_management/internal/libs/db"
 	"github.com/Krystian19/quote_management/internal/libs/env"
 	"github.com/enescakir/emoji"
+
+	"net/http"
+	_ "net/http/pprof"
 )
 
 func Run(ctx context.Context) error {
 	ev := env.GetEnv()
+
+	go func() {
+		log.Println(http.ListenAndServe(":6060", nil))
+	}()
 
 	db, err := db.New(db.Opts{
 		Url: ev.DB_URL,

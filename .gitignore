@@ -3,6 +3,8 @@ build
 _cache*
 demo/*
 samples/*
+*.svg
+*.pprof
 
 # dotenv environment variables file
 .env

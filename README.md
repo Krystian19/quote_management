@@ -19,3 +19,9 @@ GraphQl playground should be available @ http://localhost:4000/
 ### Project diagram
 
 ![Alt text](images/pic.png?raw=true)
+
+### External BFF Pprof
+
+Snapshot taken when running the `getQuotes` query with all the associated fields included:
+
+![Alt text](images/external_bff_cpu_profile.png?raw=true)

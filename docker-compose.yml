@@ -75,6 +75,7 @@ services:
       - app 
     ports:
       - "4000:4000"
+      - "6060:6060"
     depends_on:
       quote.postgres:
         condition: service_healthy
