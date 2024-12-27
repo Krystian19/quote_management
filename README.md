@@ -20,6 +20,12 @@ GraphQl playground should be available @ http://localhost:4000/
 
 ![Alt text](images/pic.png?raw=true)
 
+### DB diagram
+
+(Inventory Item Supply is no longer relevant)
+
+![Alt text](images/db_schema.png?raw=true)
+
 ### External BFF Pprof
 
 Snapshot taken when running the `getQuotes` query with all the associated fields included:
